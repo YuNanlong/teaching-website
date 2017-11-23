@@ -10,7 +10,7 @@
 
 ### 开发环境
 Python版本3.6（本地3.5也可以）
-Django版本1.8（Django1.8.2中文文档http://usyiyi.cn/translate/django_182/index.html）
+Django版本1.8.2（Django1.8.2中文文档http://usyiyi.cn/translate/django_182/index.html）
 如果在开发过程中使用了第三方库与工具，请在虚拟环境激活的情况下，使用：
 ```
 cd 项目根目录
