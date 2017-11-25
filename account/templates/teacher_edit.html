@@ -1,0 +1,18 @@
+{% extends 'edit_base.html' %}
+
+{% block content %}
+<h2>Edit profile</h2>
+
+<form method="post">
+        {% csrf_token %}
+    <p><label for="id_username">Username:</label>{{form.username}}</p>
+<p><label for="id_email">Email:</label>{{form.email}}</p>
+<p><label for="id_phone">Phone:</label>{{form.phone}}</p>
+<p><label for="id_desc_achive">Desc achive:</label> {{form.desc_achive}}</p>
+<p><label for="id_desc_teach_type">Desc teach type:</label> {{form.desc_teach_type}}</p>
+<p><label for="id_desc_publish">Desc publish:</label> {{form.desc_publish}}</p>
+<p><label for="id_desc_honor">Desc honor:</label> {{form.desc_honor}}</p>
+<p><label for="id_desc_more">Desc more:</label> {{form.desc_more}}</p>
+    <button type="submit">确定修改</button>
+</form>
+{% endblock %}

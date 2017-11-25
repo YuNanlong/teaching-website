@@ -20,7 +20,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '&5m2kmn6s&=4le^toj&ta8gp9apr&sh6__u3p)5(m0xety#^$#'
+SECRET_KEY = '#!7nk)emfzaxr=&fn#prjlq(i6i7nvr2qv%l1po)+(+iyu=7+_'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -37,6 +37,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'teach',
+    'forum',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -63,6 +66,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -76,8 +80,11 @@ WSGI_APPLICATION = 'teachingwebsite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'teachingwebsite',
+        'USER': 'webadmin',
+        'PASSWORD': 'webadmin',
+        'PORT': '3306',
     }
 }
 
@@ -85,9 +92,9 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'zh-hans'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 
@@ -100,3 +107,18 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
+
+LOGIN_REDIRECT_URL = 'home'
+
+# Django邮箱配置
+
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.126.com'                   
+EMAIL_PORT = 465                                
+EMAIL_HOST_USER = 'teachingwebsite@126.com'       
+EMAIL_HOST_PASSWORD = 'mssdd2017'                 
+EMAIL_SUBJECT_PREFIX = u'[教学网站]'            
+EMAIL_USE_SSL = True 
+DEFAULT_FROM_EMAIL = 'teachingwebsite@126.com'

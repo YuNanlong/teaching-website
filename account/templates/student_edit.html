@@ -1,0 +1,13 @@
+{% extends 'edit_base.html' %}
+
+{% block content %}
+<h2>Edit profile</h2>
+
+<form method="post">
+        {% csrf_token %}
+    <p><label for="id_username">Username:</label>{{ form.username }}</p>
+<p><label for="id_email">Email:</label> {{ form.email }}</p>
+<p><label for="id_phone">Phone:</label> {{ form.phone }}</p>
+    <button type="submit">确定修改</button>
+</form>
+{% endblock %}
