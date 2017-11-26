@@ -1,21 +1,54 @@
-{% extends 'edit_base.html' %}
+{% extends 'base.html' %}
+
+{% block title %}更改密码{% endblock title %}
 
 {% block content %}
-<h2>Change password</h2>
-<form method="post">
-    {% csrf_token %}
-    {% for field in form %}
-    <p>
-        {{ field.label_tag }}<br>
-        {{ field }}
-        {% if field.help_text %}
-        <small style="color: grey">{{ field.help_text }}</small>
-        {% endif %}
-        {% for error in field.errors %}
-    <p style="color: red">{{ error }}</p>
-    {% endfor %}
-    </p>
-    {% endfor %}
-    <button type="submit">确定修改</button>
-</form>
+
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="container">
+                <div class="jumbotron">
+                    <div class="container">
+                        <form class="form-signin" method="POST" onsubmit="return checkPassword()">
+                            <h1 class="form-signin-heading">更改密码</h1>
+                            <hr />
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                                {% if "password" in field.html_name %}
+                                <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                       type="password" required />
+                                {% else %}
+                                    <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                       type="text" required />
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <button class="btn btn-primary" type="submit">点击修改密码</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    function checkPassword()
+    {
+        var newPassword = $("#id_new_password1").val();
+        var newPasswordAgain = $("#id_new_password2").val();
+
+        if(newPassword != newPasswordAgain)
+        {
+            alert("2个新密码不相同!");
+            return false;
+        }
+
+        return true;
+
+    }
+</script>
+{% endblock script %}
