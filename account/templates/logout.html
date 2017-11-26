@@ -1,9 +1,20 @@
 {% extends 'base.html' %}
 
-{% block title %}See you!{% endblock %}
+{% block title %}登出{% endblock %}
 
 {% block content %}
-  <h2>Logged out</h2>
-  <p>You have been successfully logged out.</p>
-  <p><a href="{% url 'login' %}">Log in</a> again.</p>
+  <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="container">
+                <div class="jumbotron">
+                    <div class="container">
+                        <h1 class="form-signin-heading">登录</h1>
+                        <hr/>
+                        <p>您已经登出！</p>
+                        <p><a href="{% url 'login' %}">再次登录？</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -1,13 +1,66 @@
-{% extends 'edit_base.html' %}
+{% extends 'base.html' %}
+
+{% block title %}个人信息查看与修改{% endblock title %}
 
 {% block content %}
-<h2>Edit profile</h2>
 
-<form method="post">
-        {% csrf_token %}
-    <p><label for="id_username">Username:</label>{{ form.username }}</p>
-<p><label for="id_email">Email:</label> {{ form.email }}</p>
-<p><label for="id_phone">Phone:</label> {{ form.phone }}</p>
-    <button type="submit">确定修改</button>
-</form>
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="container">
+            <div class="jumbotron">
+            <div class="container">
+                <h1>修改个人资料</h1>
+                <hr>
+                <form class="form" role="form" method="post" onsubmit="return check()">
+                {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                            {% if "password" in field.html_name %}
+                            <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                   type="password" value="{{ field.value }}" required />
+                            {% elif "username" in field.html_name %}
+                            <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                type="text" value="{{ field.value }}" required readonly/>
+                            {% else %}
+                            <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                type="text" value="{{ field.value }}" required />
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <button class="btn btn-primary" type="submit">点击修改</button>
+                </form>
+            </div>
+            </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+
+    <script type="text/javascript">
+        function check()
+        {
+            var email = $("#id_email").val();
+            var phone = $("#id_phone").val();
+            var emailRegex = /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/
+            if(!emailRegex.test(email))
+            {
+                alert("电子邮件格式不正确!");
+                return false;
+            }
+
+            if(phone.length > 20)
+            {
+                alert("电话格式不正确!");
+                return false;
+            }
+
+            alert("提交成功!");
+            return true;
+        }
+    </script>
+
 {% endblock %}

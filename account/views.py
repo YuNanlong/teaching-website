@@ -63,12 +63,14 @@ def change_pwd(request):
         form = PasswordChangeForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('home')  
+            return redirect('pass')
     else:
         form = PasswordChangeForm(user=request.user)
     return render(request, 'change_pwd.html', {'form': form})
 
-# FOR TEST
-@login_required
+# Set as home page without requiring logged in
 def home(request):
-    return render(request, 'home_test.html')
+    return render(request, 'base.html')
+
+# TODO: 帮助页面
+# TODO: 重置密码邮件发送

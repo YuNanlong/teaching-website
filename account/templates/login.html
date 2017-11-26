@@ -1,13 +1,44 @@
 {% extends 'base.html' %}
 
-{% block title %}Login{% endblock %}
+{% block title %}登录{% endblock %}
 
 {% block content %}
-  <h2>Login</h2>
-  <form method="post">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Login</button>
-  </form>
-  <a href="{% url 'password_reset' %}">忘记密码？</a>
-{% endblock %}
+
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+            <div class="container">
+                <div class="jumbotron">
+                    <div class="container">
+                        <form class="form-signin" method="POST">
+                            <h1 class="form-signin-heading">登录</h1>
+                            <hr />
+                            {% csrf_token %}
+                            {% for field in form %}
+                            <div class="form-group">
+                                <label for="{{ field.id_for_label }}">{{ field.label_tag }}</label>
+                                {% if "password" in field.html_name %}
+                                <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                       type="password" required />
+                                {% else %}
+                                    <input class="form-control" autofocus="autofocus" id="{{ field.id_for_label }}" name="{{ field.html_name }}" placeholder="{{ field.label }}"
+                                       type="text" required />
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                            <button class="btn btn-primary" type="submit">点击登录</button>
+                            <br><br>
+                            <a href="{% url 'password_reset' %}">忘记密码？</a>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+<script>
+//不管了 不写回调函数了
+</script>
+{% endblock script %}
