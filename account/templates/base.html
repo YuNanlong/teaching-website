@@ -49,9 +49,11 @@
 							<a href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
 							<ul class="dropdown-menu">
 
-								<li>
-									 <a href="#">通知</a>
-								</li>
+								{% if not user.teacher %}
+                                <li>
+                                     <a href="#">通知</a>
+                                </li>
+                                {% endif %}
 								<li>
 									 <a href="{% url 'edit' %}">编辑个人资料</a>
 								</li>

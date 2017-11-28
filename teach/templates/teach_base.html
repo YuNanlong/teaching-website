@@ -48,10 +48,11 @@
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
                             <ul class="dropdown-menu">
-
+                                {% if not user.teacher %}
                                 <li>
                                      <a href="#">通知</a>
                                 </li>
+                                {% endif %}
                                 <li>
                                      <a href="{% url 'edit' %}">编辑个人资料</a>
                                 </li>
@@ -119,6 +120,7 @@
                 常用功能
             </h2>
             <hr>
+            {% if user.teacher %}
             <a href="#">
                 <button class="btn btn-primary">发布课程公告</button>
             </a>
@@ -137,7 +139,12 @@
             <a href="#">
                 <button class="btn btn-primary">删除视频</button>
             </a>
-            <br>
+            {% else %}
+            <a href="#">
+                <button class="btn btn-primary">查看个人通知</button>
+            </a>
+            {% endif %}
+            <br><br>
         </div>
     </div>
     <!-- 课程大纲 -->
@@ -210,12 +217,14 @@
                                 </a>
                             </p>
                             <br>
+                            {% if user.teacher %}
                             <a href="#">
                                 <button class="btn btn-primary upload_homework">上传作业</button>
                             </a>
                             <a href="#">
                                 <button class="btn btn-primary">批改作业</button>
                             </a>
+                            {% endif %}
                         </td>
                     </tr>
                 </tbody>
@@ -280,10 +289,22 @@
 {% block script %}
 
 <script type="text/javascript">
+
+    function getQueryString(name)
+    {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r != null)
+            return unescape(r[2]);
+        return null;
+    }
     $(document).ready
     (
+
         function ()
         {
+            var courseName = getQueryString("course");
+            //alert(courseName);
             $("#course_introduction").hide();
             $("#id_course_introduction").click
             (
