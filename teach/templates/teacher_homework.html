@@ -93,18 +93,20 @@
                 <br>
                 <hr>
                 <form method="post" class="form" action="#" enctype="multipart/form-data">
-                    <div class="form-group">
-                        <label for="id_for_week">当前周:</label>
-                        <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
-                    </div>
                     <div class="row clearfix">
+                        <div class="col-md-2 column">
+                            <div class="form-group">
+                            <label for="id_for_week">当前周:</label>
+                            <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
+                            </div>
+                        </div>
                         <div class="col-md-8 column">
                             <div class="form-group">
                                 <label for="id_for_deadline">截止日期:</label>
                                 <input type="Date" name="deadline" id="id_for_deadline" class="form-control">
                             </div>
                         </div>
-                        <div class="col-md-4 column">
+                        <div class="col-md-2 column">
                             <div class="form-group">
                                 <label for="id_for_score">总分:</label>
                                 <input type="text" name="score" id="id_for_score" class="form-control">
@@ -113,7 +115,7 @@
                     </div>
                     <div class="form-group">
                         <label for="id_for_week">作业描述:</label>
-                        <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
+                        <textarea name="week" id="id_for_week" class="form-control" style="height:200px; resize:none;"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="id_for_courseware">作业文件：</label>
