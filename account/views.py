@@ -63,7 +63,7 @@ def change_pwd(request):
         form = PasswordChangeForm(data=request.POST, user=request.user)
         if form.is_valid():
             form.save()
-            return redirect('pass')
+            return redirect('home')
     else:
         form = PasswordChangeForm(user=request.user)
     return render(request, 'change_pwd.html', {'form': form})
