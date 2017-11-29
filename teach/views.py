@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
 # Create your views here.
-def teach_home(request):
+def teach_detail(request):
     '''For testing'''
     course = request.GET['course']
     if course == "SE":
