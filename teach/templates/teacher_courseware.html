@@ -1,0 +1,50 @@
+{% extends "teach_detail.html" %}
+{% block title %}课件上传{% endblock %}
+{% block content %}
+    <div class="row clearfix">
+        <div class="col-md-12">
+                <h1>
+                    软件工程基础课件上传<!-- Course name -->
+                </h1>
+                <br>
+                <hr>
+                <form method="post" class="form" action="#" enctype="multipart/form-data" onsubmit="return check()">
+                    <div class="form-group">
+                        <label for="id_for_week">周:</label>
+                        <input type="text" name="week" id="id_for_week" class="form-control" value="">
+                    </div>
+                    <div class="form-group">
+                        <label for="id_for_courseware">课件文件：</label>
+                        <input type="file" name="courseware" id="id_for_courseware">
+                    </div>
+                    <p class="help-block">
+                        上传如PDF, DOC[X], XLS[X], PPT[X], ZIP, RAR等格式的课件。
+                    </p>
+                    <button type="submit" class="btn btn-primary">提交课件</button>
+                </form>
+        </div>
+    </div>
+    {% endblock content %}
+{% block script %}
+
+<script type="text/javascript">
+    //var status = false;
+    $(document).ready
+    (
+        function ()
+        {
+            
+        }
+    );
+
+    function check()
+    {
+        //TODO:
+    }
+
+
+</script>
+{% endblock script %}
+
+</body>
+</html>
