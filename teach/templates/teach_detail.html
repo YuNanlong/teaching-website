@@ -147,6 +147,14 @@
             <br><br>
         </div>
     </div>
+    {% for plan in plan_list %}
+        <p>{{ plan.topic }}</p>
+    {% endfor %}
+    {% for video in video_list %}
+        {% for url in video %}
+        <p>{{ url.url }}</p>
+        {% endfor %}
+    {% endfor %}
     <!-- 课程大纲 -->
     <div class="row clearfix">
         <div class="col-md-12 column">

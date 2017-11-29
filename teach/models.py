@@ -10,7 +10,7 @@ class Course(models.Model):
     credit = models.DecimalField(max_digits=2, decimal_places=1) # 学分，最多两位有效数字和一位小数
     college = models.CharField(max_length=20, blank=True) # 开课学院，非必需
     student = models.ManyToManyField(Student, db_table="take_course") # 上这门课的学生
-    teacher = models.ManyToManyField(Teacher, db_table="teach_course") # 上这门课的老师
+    teacher = models.ManyToManyField(Teacher, db_table="give_course") # 上这门课的老师
 
     def __str__(self):
         return self.name
