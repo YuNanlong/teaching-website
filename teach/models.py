@@ -21,6 +21,9 @@ class Plan(models.Model):
     topic = models.CharField(max_length=200, blank=True) # 计划内容，非必需
     date = models.DateField() # 上课具体日期
 
+    def __str__(self):
+        return self.course.name + str(self.week_num)
+
 class Video(models.Model):
     plan = models.ForeignKey(Plan)
     url = models.URLField() # 视频链接
