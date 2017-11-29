@@ -1,0 +1,34 @@
+{% extends "teach_detail.html" %}
+
+{% block title %}发布课程公告{% endblock title %}
+
+{% block content %}
+
+    <div class="row clearfix">
+        <div class="col-md-12">
+                <h1>
+                    发布课程公告<!-- Course -->
+                </h1>
+                <br>
+                <hr>
+                <form method="post" class="form" action="#">
+                    <div class="form-group">
+                        <label for="id_for_course">课程内容：</label>
+                        <input type="text" name="course" id="id_for_course" value="" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="id_for_content">公告内容:</label>
+                        <textarea name="content" id="id_for_content" class="form-control" style="height: 200px; resize: none;" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">提交留言</button>
+                </form>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+
+    </script>
+{% endblock script %}

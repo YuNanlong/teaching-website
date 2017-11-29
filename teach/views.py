@@ -6,11 +6,11 @@ def teach_detail(request):
     course = request.GET['course']
     if course == "SE":
         # render SE page
-        return render(request, "teach_base.html")
+        return render(request, "teach_detail.html")
     elif course == "SRE":
         # render
-        return render(request, "teach_base.html")
+        return render(request, "teach_detail.html")
     elif course == "SQTA":
-        return render(request, "teach_base.html")
+        return render(request, "teach_detail.html")
     else:
-        return render(request, "teach_base.html")
+        return render(request, "teach_detail.html")

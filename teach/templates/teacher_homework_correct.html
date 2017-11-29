@@ -1,0 +1,72 @@
+{% extends "teach_detail.html" %}
+
+{% block title %}批改作业{% endblock title %}
+
+{% block content %}
+    <div class="row clearfix">
+        <div class="col-md-12">
+            <h1>
+                批改作业<!-- Course -->
+            </h1>
+            <p>
+                当前作业信息: <span></span>
+            </p>
+            <br>
+            <hr>
+            <br>
+            <div class="row clearfix">
+                <div class="col-md-12">
+                    <form class="form" method="post" action="#">
+                        <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>学生用户名</th>
+                                <th>作业下载链接</th>
+                                <th>当前学生作业评分</th>
+                                <th>新的评分</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td><input class="form-control" type="text" name="user_1" value="user1" readonly></td>
+                                <td><a href="#">link</a></td>
+                                <td>95</td>
+                                <td><input class="form-control" type="text" name="score_1"></td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        <br>
+                        <button type="submit" class="btn btn-primary">提交新的评分</button>
+                    </form>
+
+                </div>
+            </div>
+            <hr>
+                <!--作业反馈-->
+            <div class="row clearfix">
+                <h1>
+                    当前作业得分情况<!-- Course -->
+                </h1>
+                <div class="col-md-3">
+                    <label>提交人数: </label><span></span>
+                </div>
+                <div class="col-md-3">
+                    <label>平均分: </label><span></span>
+                </div>
+                <div class="col-md-3">
+                    <label>最高分: </label><span></span>
+                </div>
+                <div class="col-md-3">
+                    <label>最低分: </label><span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+
+    </script>
+{% endblock script %}

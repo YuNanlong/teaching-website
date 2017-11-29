@@ -3,7 +3,51 @@
 {% block title %}提交 & 查看作业{% endblock title %}
 
 {% block content %}
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+                <h1>
+                    软件工程基础作业上传 <!-- Course name -->
+                </h1>
+                <br>
+                <hr>
 
+                <div class="row clearfix">
+                    <div class="col-md-4 column">
+                        <label>当前作业提交状态: <span></span></label>
+                    </div>
+                    <div class="col-md-4 column">
+                        <label>截止时间: <span></span></label>
+                    </div>
+                    <div class="col-md-4 column">
+                        <label>当前作业分数: <span></span></label>
+                    </div>
+                </div>
+                <hr>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                    <form method="post" class="form" enctype="multipart/form-data" action="#">
+                        <div class="form-group">
+                            <label for="id_for_week">当前周:</label>
+                            <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_for_homework">作业附件:</label>
+                            <input type="file" name="homework" id="id_for_homework" class="form-control" required>
+                        </div>
+                        <p class="help-block">
+                            添加作业附件。
+                        </p>
+                        <div class="form-group">
+                            <label for="id_for_message">附加信息：</label>
+                            <textarea name="message" id="id_for_message" class="form-control" style="height: 200px; resize: none;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">提交作业</button>
+                    </form>
+                    </div>
+                </div>
+        </div>
+    </div>
 
 {% endblock content %}
 
