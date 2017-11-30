@@ -1,5 +1,10 @@
 from django.db import models
 from account.models import Teacher, Student
+from time import gmtime, strftime
+from .storage import FileStorage
+
+def classware_upload_path(instance, filename):
+    return '/'.join(['classware', filename])
 
 class Course(models.Model):
     name = models.CharField(max_length=20, unique=True, db_index=True) # 课程名
@@ -37,7 +42,7 @@ class Homework(models.Model):
 
 class Classware(models.Model):
     plan = models.ForeignKey(Plan)
-    ppt = models.FileField() # 课件文件
+    ppt = models.FileField(upload_to=classware_upload_path, storage=FileStorage()) # 课件文件
 
 class Submit(models.Model):
     student = models.ForeignKey(Student)
@@ -52,3 +57,4 @@ class Notice(models.Model):
     title = models.CharField(max_length=60) # 标题
     content = models.CharField(max_length=800) # 内容
     student = models.ManyToManyField(Student, db_table="need_notify") # 尚未被通知的学生
+    post_time = models.DateTimeField() # 发布时间
