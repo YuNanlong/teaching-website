@@ -102,7 +102,6 @@ def upload_classware(request):
         if form.is_valid():
             plan = course.plan_set.filter(week_num=request.POST['week_num'])
             if len(plan) > 0:
-                #request.FILES['classware'].name = 'ss'
                 classware = Classware(plan=plan[0], ppt=request.FILES['classware'])
                 classware.save()
                 return redirect('home')
