@@ -10,3 +10,8 @@ class PlanForm(forms.Form):
 class ClasswareForm(forms.Form):
     week_num = forms.IntegerField()
     classware = forms.FileField()
+
+class SubmitForm(forms.Form):
+    submit_id = forms.IntegerField()
+    score = forms.IntegerField()
+    remark = forms.CharField(max_length=800, required=False)

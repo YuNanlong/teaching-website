@@ -49,8 +49,9 @@ class Submit(models.Model):
     homework = models.ForeignKey(Homework)
     comment = models.CharField(max_length=800, blank=True) # 作业备注，非必需
     submit_time = models.DateField(auto_now=True) # 上传时间
-    score = models.IntegerField() # 得分
+    score = models.IntegerField(default=0) # 得分
     solution = models.FileField() # 作业文件
+    remark = models.CharField(max_length=800, blank=True) # 教师评语
 
 class Notice(models.Model):
     course = models.ForeignKey(Course)

@@ -143,3 +143,23 @@ def delete_classware(request):
             classware_list.extend(plan.classware_set.all())          
         return render(request, 'teacher_courseware_delete.html', {'classware_list': classware_list})
 
+def check_homework(request):
+    homework_id = request.GET['id']
+    homework = get_object_or_404(Homework, pk=homework_id)
+    submit_list = homework.submit_set.all()
+    SubmitFormSet = formset_factory(SubmitForm, extra=0)
+    if request.method == 'POST':
+        formset = SubmitFormSet(request.POST)
+        if formset.is_valid() == True:
+            for form in formset:
+                submit = get_object_or_404(submit_list, pk=form.cleaned_data['submit_id'])
+                submit.score = form.cleaned_data['score']
+                submit.remark = form.cleaned_data['remark']
+                submit.save()
+    else:
+        formset_init = [{'submit_id': submit.id, 'score': submit.score, 'remark': submit.remark} for submit in submit_list]
+        formset = SubmitFormSet(initial=formset_init)
+    for submit in submit_list:
+        print(submit.score)
+    return render(request, 'teacher_homework_correct.html', {'formset': formset, 'submit_list': submit_list})
+        

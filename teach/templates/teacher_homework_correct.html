@@ -3,8 +3,23 @@
 {% block title %}批改作业{% endblock title %}
 
 {% block content %}
+<!-- FOR TEST -->
+<form method="post" action="">
+        {% csrf_token %}
+        <!-- 以下这一句必须有! -->
+        {{ formset.management_form }}
+        <table>
+            {% for form in formset %}
+            {{ form }}
+            {% endfor %}
+        </table>
+        <button type="submit" class="btn btn-primary">提交</button>
+    </form>
     <div class="row clearfix">
         <div class="col-md-12">
+                {% for submit in submit_list %}
+                <p>{{submit.score}}</p>
+                {% endfor %}
             <h1>
                 批改作业<!-- Course -->
             </h1>

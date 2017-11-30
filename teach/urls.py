@@ -9,4 +9,5 @@ urlpatterns = [
     url(r'^upload_classware', views.upload_classware, name="upload_classware"),
     url(r'^download_classware', views.download_classware, name="download_classware"),
     url(r'^delete_classware', views.delete_classware, name="delete_classware"),
+    url(r'^check_homework', views.check_homework, name="check_homework"),
 ]
