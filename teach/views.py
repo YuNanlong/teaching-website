@@ -106,7 +106,7 @@ def upload_classware(request):
             if len(plan) > 0:
                 classware = Classware(plan=plan[0], ppt=request.FILES['classware'])
                 classware.save()
-                return redirect('home')
+        return HttpResponse("<script>window.location.href='/teach/upload_classware?course="+course_name+"';</script>")
     else:
         course_name = request.GET['course']
         course = get_object_or_404(Course, name=course_name)
