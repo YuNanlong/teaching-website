@@ -5,7 +5,7 @@
     <div class="row clearfix">
         <div class="col-md-12">
                 <h1>
-                    软件工程基础作业上传 <!-- Course name -->
+                    作业上传 <!-- Course name -->
                 </h1>
                 <br>
                 <hr>
@@ -13,14 +13,20 @@
                     <div class="row clearfix">
                         <div class="col-md-2 column">
                             <div class="form-group">
+                            <label for="id_for_course">当前课程:</label>
+                            <input type="text" name="course" id="id_for_course" class="form-control" value="" readonly>
+                            </div>
+                        </div>
+                        <div class="col-md-2 column">
+                            <div class="form-group">
                             <label for="id_for_week">当前周:</label>
                             <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
                             </div>
                         </div>
-                        <div class="col-md-8 column">
+                        <div class="col-md-6 column">
                             <div class="form-group">
                                 <label for="id_for_deadline">截止日期:</label>
-                                <input type="Date" name="deadline" id="id_for_deadline" class="form-control">
+                                <input type="date" name="deadline" id="id_for_deadline" class="form-control">
                             </div>
                         </div>
                         <div class="col-md-2 column">

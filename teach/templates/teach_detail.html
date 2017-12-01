@@ -5,10 +5,10 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}课程名XX{% endblock %}</title>
+    <title>{% block title %}{{ course.name }}{% endblock %}</title>
 </head>
 <body>
-<!-- TODO: 添加链接:通知, 未来可能需要修改url配置 -->
+<!-- TODO: 添加链接 -->
 <div class="container">
     <!-- Navbar -->
     <div class="row clearfix">
@@ -42,15 +42,15 @@
                     {% endif %}
                     <ul class="nav navbar-nav navbar-right">
                         <li>
-                             <a href="#">使用帮助</a>
+                             <a href="{% url 'help' %}">使用帮助</a>
                         </li>
                         {% if user.is_authenticated %}
                         <li class="dropdown">
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
+                            <a id="id_for_notice" href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
                             <ul class="dropdown-menu">
                                 {% if not user.teacher %}
                                 <li>
-                                     <a href="#">通知</a>
+                                     <a id="id_for_message" href="{% url 'check_notice' %}">通知</a>
                                 </li>
                                 {% endif %}
                                 <li>
@@ -90,32 +90,28 @@
         <div class="col-md-12">
             <div class="jumbotron">
                 <h1>
-                    软件工程基础
+                    {{ course.name }}
                 </h1>
                 <hr>
                 <h2 id="id_course_introduction">
                     点击查看课程介绍
                 </h2>
-                <p id="course_introduction">
-                    <!-- 课程介绍XXX -->
-                </p>
-                <hr>
-                <h2>
-                    课程公告
-                </h2>
-                <hr>
-                <p>
-                    <small>
-                        <!-- <span>1.</span>石神出国访问美国总统！ -->
-                    </small>
-                </p>
-                <hr>
+                <div id="course_introduction">
+                    <p>课程名: {{ course.name }}</p>
+                    <p>课程简介: {{ course.abstract }}</p>
+                    <p>教材: {{ course.textbook }}</p>
+                    <p>学分: {{ course.credit }}</p>
+                    <p>周数: {{ course.week }}</p>
+                    <p>上课时间: {{ course.class_time }}</p>
+                </div>
             </div>
         </div>
     </div>
     <!-- 常用功能 -->
     <div class="row clearfix">
         <div class="col-md-12 column">
+
+        {% if status == 1 %}
             <h2>
                 常用功能
             </h2>
@@ -124,13 +120,13 @@
             <a href="#">
                 <button class="btn btn-primary">发布课程公告</button>
             </a>
-            <a href="#">
+            <a href="{% url 'edit_schedule' %}?course={{ course.name }}">
                 <button class="btn btn-primary">更改教学计划</button>
             </a>
-            <a href="#">
+            <a href="{% url 'upload_classware' %}?course={{ course.name }}">
                 <button class="btn btn-primary">上传课件</button>
             </a>
-            <a href="#">
+            <a href="{% url 'delete_classware' %}?course={{ course.name }}">
                 <button class="btn btn-primary">删除课件</button>
             </a>
             <a href="#">
@@ -140,21 +136,23 @@
                 <button class="btn btn-primary">删除视频</button>
             </a>
             {% else %}
-            <a href="#">
+            <a href="{% url 'check_notice' %}">
                 <button class="btn btn-primary">查看个人通知</button>
             </a>
             {% endif %}
+        {% endif %}
             <br><br>
         </div>
-    </div>
-    {% for plan in plan_list %}
-        <p>{{ plan.topic }}</p>
-    {% endfor %}
-    {% for video in video_list %}
-        {% for url in video %}
-        <p>{{ url.url }}</p>
-        {% endfor %}
-    {% endfor %}
+    </div><!--
+{#        --#}
+{#    {% for plan in plan_list %}#}
+{#        <p>{{ plan.topic }}</p>#}
+{#    {% endfor %}#}
+{#    {% for video in video_list %}#}
+{#        {% for url in video %}#}
+{#        <p>{{ url.url }}</p>#}
+{#        {% endfor %}#}
+{#    {% endfor %}-->#} -->
     <!-- 课程大纲 -->
     <div class="row clearfix">
         <div class="col-md-12 column">
@@ -167,74 +165,85 @@
                 <thead>
                     <tr>
                         <th>
-                            Week
+                            周
                         </th>
                         <th>
-                            Date
+                            日期
                         </th>
                         <th>
-                            Topic
+                            主题
                         </th>
                         <th>
-                            Courseware
+                            课件
                         </th>
                         <th>
-                            Video
+                            视频
                         </th>
                         <th>
-                            Homework
+                            作业
                         </th>
-                        <!-- <th>
-                            Project
-                        </th> -->
                     </tr>
                 </thead>
                 <tbody>
+                {% for info in teach_detail_info %}
                     <tr>
                         <td>
-                            <!-- 1 -->
+                            {{ info.0.week_num }}
                         </td>
                         <td>
-                            <!-- 2017-09-21 -->
+                            {{ info.0.date }}
                         </td>
                         <td>
-                            <!-- Introduction -->
+                            {{ info.0.topic }}
                         </td>
                         <td>
+                            {% for courseware in info.1 %}
                             <p>
-                                <a href="#">
-                                    <!-- Link to download -->
-                                    <!-- introduction.pdf -->
+                                <a href="{% url 'download_classware' %}?classware={{ courseware.ppt.name }}">
+                                    {{ courseware.ppt.name }}
                                 </a>
                             </p>
                             <br>
+                            {% endfor %}
                         </td>
                         <td>
+                            {% for video in info.2 %}
                             <p>
-                                <a href="#">
+                                <a href="{{ video.url }}">
                                     <!-- Link to 3rd party site -->
                                     <!-- introduction.mp4 -->
+                                    {{ video.url }}
                                 </a>
                             </p>
                             <br>
+                            {% endfor %}
                         </td>
                         <td>
-                            <p>
+
+                                {% if status == 1 and user.student %}
                                 <a href="#">
-                                    <!-- hw1 -->
+                                    {{ info.3.enclosure }}
                                 </a>
-                            </p>
-                            <br>
-                            {% if user.teacher %}
+                                {% else %}
+                                <a>
+                                    {{ info.3.enclosure }}
+                                </a>
+                                {% endif %}
+                            &nbsp;&nbsp;
+
+                            {% if user.teacher and status == 1 %}
                             <a href="#">
                                 <button class="btn btn-primary upload_homework">上传作业</button>
                             </a>
-                            <a href="#">
+                                {% if info.3 != null %}
+                            <a href="{% url 'check_homework' %}?id={{ info.3.id }}">
                                 <button class="btn btn-primary">批改作业</button>
                             </a>
+                                {% endif %}
                             {% endif %}
                         </td>
                     </tr>
+                {% endfor %}
                 </tbody>
             </table>
         </div>
@@ -255,12 +264,12 @@
                     </a>
                 </div>
                 <div class="col-md-4">
-                    <a href="#">
+                    <a href="{% url 'teacher_introduction' %}?id={{ course.teacher.first.id }}">
                         <h3>教师信息</h3>
                     </a>
                 </div>
                 <div class="col-md-4">
-                    <a href="#">
+                    <a href="{% url 'friendly_link' %}">
                         <h3>友情链接</h3>
                     </a>
                 </div>
@@ -268,7 +277,6 @@
         </div>
     </div>
     <br>
-
     {% endblock content %}
 </div>
 
@@ -309,7 +317,6 @@
 
     $(document).ready
     (
-
         function ()
         {
             var courseName = getQueryString("course");
@@ -334,10 +341,25 @@
     );
 
 </script>
-
-
-
 {% endblock script %}
+<script type="text/javascript">
+    $(document).ready
+    (
+        function ()
+        {
+            $.get("{% url 'unread' %}",
+                function(ret)
+                {
+                    if(ret == 0)
+                        return;
+                    $("#id_for_notice").text("通知及选项(" + ret + ")");
+                    $("#id_for_notice").css("background-color", "red");
+                    $("#id_for_notice").css("color", "white");
+                    $("#id_for_message").text("您有未读通知(" + ret + ")");
+                });
+        }
+    );
+</script>
 
 </body>
 </html>

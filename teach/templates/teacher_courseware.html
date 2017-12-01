@@ -3,26 +3,32 @@
 {% block title %}课件上传{% endblock %}
 
 {% block content %}
-<form method="post" action=""  enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form}}
-    <button type="submit" class="btn btn-primary">提交</button>
-</form>
     <div class="row clearfix">
         <div class="col-md-12">
                 <h1>
-                    软件工程基础课件上传<!-- Course name -->
+                    {{ course.name }}课件上传
                 </h1>
                 <br>
                 <hr>
-                <form method="post" class="form" action="#" enctype="multipart/form-data" onsubmit="return check()">
-                    <div class="form-group">
-                        <label for="id_for_week">周:</label>
-                        <input type="text" name="week" id="id_for_week" class="form-control" value="">
+                <form method="post" class="form" enctype="multipart/form-data" onsubmit="return check()">
+                    {% csrf_token %}
+                    <div class="row clearfix">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="id_for_week_number">周:</label>
+                                <input type="text" name="week_num" id="id_for_week_number" class="form-control" value="">
+                            </div>
+                        </div>
+                        <div class="col-md-9">
+                            <div class="form-group">
+                                <label for="id_for_course">当前课程:</label>
+                                <input type="text" name="course" id="id_for_course" class="form-control" value="{{ course.name }}" readonly>
+                            </div>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="id_for_courseware">课件文件：</label>
-                        <input type="file" name="courseware" id="id_for_courseware">
+                        <input type="file" name="classware" id="id_for_courseware" required>
                     </div>
                     <p class="help-block">
                         上传如PDF, DOC[X], XLS[X], PPT[X], ZIP, RAR等格式的课件。
@@ -47,7 +53,14 @@
 
     function check()
     {
-        //TODO:
+        if(parseInt($("#id_for_week_number").val()) > {{ course.week }})
+        {
+            alert("周数最多为{{ course.week }}!");
+            return false;
+        }
+
+        alert("提交成功");
+        return true;
     }
 
 

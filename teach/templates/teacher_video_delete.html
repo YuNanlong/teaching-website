@@ -26,7 +26,7 @@
                     </thead>
                     <tbody>
                     <tr class="video">
-                        <td><input class="form-control" name="video_id" type="checkbox" value=""/></td>
+                        <td><input name="video_id" type="checkbox" value="1"/></td>
                         <td>1</td>
                         <td>1</td>
                         <td>Test courseware</td>
@@ -44,22 +44,42 @@
         (
             function ()
             {
+                $.ajaxSetup(
+                    {
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'} //为什么django写AJAX那么麻烦，操
+                    }
+                );
                 $("#id_for_delete_video").click
                 (
+
                     function ()
                     {
-                        //get the deletion list
-                        $.post(/*URL, DATA*/, function (ret)
-                        {
-                            if(ret)
+                        var deletionList = new Array();
+
+                        $.each($('input:checkbox:checked'),
+                            function()
                             {
-                                alert("删除视频成功!");
-                                location.reload();
-                            }
-                            else
+                                deletionList.push($(this).val());
+                            });
+
+                        $.ajax
+                        (
                             {
-                                alert("删除失败!");
-                            }
+                                type:"POST",
+                                data: {deleteList: deletionList},
+                                url: "{% url 'delete_video' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+                                cache: false,
+                                traditional: true,
+                                success: function(result)
+                                {
+                                    alert("删除成功!");
+                                    location.reload();
+                                    //成功时弹出view传回来的结果
+                                },
+                                error: function()
+                                {
+                                    alert("删除失败!");
+                                }
                         });
                     }
                 );

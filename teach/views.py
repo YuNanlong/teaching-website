@@ -1,5 +1,5 @@
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, get_object_or_404, redirect
+from django.shortcuts import render, get_object_or_404, redirect, HttpResponse
 from django.forms.formsets import formset_factory
 from .models import *
 from account.models import *
@@ -12,6 +12,7 @@ def teach_detail(request):
     user = request.user
     course = get_object_or_404(Course, name=course_name)
     plan_list = course.plan_set.order_by('week_num')
+    plan_range = len(plan_list)
     # video_list和classware_list都是嵌套的list
     # list中每个元素是一个子list，子list中包含一个week的所有视频和课件资料
     video_list = []
@@ -31,20 +32,21 @@ def teach_detail(request):
         if hasattr(plan, 'homework'):
             homework_list.append(plan.homework)
         else:
-            homework_list.append([])
+            homework_list.append(None)
     if hasattr(user, 'student') == True:
-        if user in course.student.all():
+        if user.student in course.student.all():
             status = 1
         else:
             status = 0
     elif hasattr(user, 'teacher') == True:  
-        if user in course.teacher.all():
+        if user.teacher in course.teacher.all():
             status = 1
         else:
             status = 0
     else:
         status = 0
-    return render(request, 'teach_detail.html', {'status': status, 'course': course, 'plan_list': plan_list, 'video_list': video_list, 'classware_list': classware_list, 'homework_list': homework_list})
+    teach_detail_info = zip(plan_list, classware_list, video_list, homework_list)
+    return render(request, 'teach_detail.html', {'status': status, 'course': course, "teach_detail_info": teach_detail_info})
 
 @login_required
 def teacher_introduction(request):
@@ -95,9 +97,9 @@ def check_notice(request):
 
 @login_required
 def upload_classware(request):
-    course_name = request.GET['course']
-    course = get_object_or_404(Course, name=course_name)
     if request.method == 'POST':
+        course_name = request.POST['course']
+        course = get_object_or_404(Course, name=course_name)
         form = ClasswareForm(request.POST, request.FILES)
         if form.is_valid():
             plan = course.plan_set.filter(week_num=request.POST['week_num'])
@@ -106,8 +108,10 @@ def upload_classware(request):
                 classware.save()
                 return redirect('home')
     else:
+        course_name = request.GET['course']
+        course = get_object_or_404(Course, name=course_name)
         form = ClasswareForm()
-    return render(request, 'teacher_courseware.html', {'form': form})
+        return render(request, 'teacher_courseware.html', {'form': form, 'course': course})
 
 @login_required
 def download_classware(request):
@@ -120,7 +124,7 @@ def download_classware(request):
                 yield chunk
             else:
                 break
-    response = StreamingHttpResponse(read_file('media/classware/' + str(filename)))
+    response = StreamingHttpResponse(read_file('media/' + str(filename)))
     response['Content-Disposition'] = 'attachment; filename=' + str(filename)
     response['Content-Type'] = 'application/octet-stream'
     return response
@@ -128,12 +132,12 @@ def download_classware(request):
 @login_required
 def delete_classware(request):
     if request.method == 'POST':
-        delete_id_list = list(request.POST.items())
+        delete_id_list = request.POST.getlist('deleteList')
         for delete_id in delete_id_list:
-            if delete_id[0] != 'csrfmiddlewaretoken':  
-                classware = get_object_or_404(Classware, pk=delete_id[1][0])
+            # if delete_id[0] != 'csrfmiddlewaretoken':
+                classware = get_object_or_404(Classware, pk=delete_id)
                 classware.delete()
-        return redirect('home') 
+        return HttpResponse(True)
     else:
         course_name = request.GET['course']
         course = get_object_or_404(Course, name=course_name)
@@ -143,10 +147,28 @@ def delete_classware(request):
             classware_list.extend(plan.classware_set.all())          
         return render(request, 'teacher_courseware_delete.html', {'classware_list': classware_list})
 
+@login_required
 def check_homework(request):
+    total_point = 0.0
+    max_point = 0.0
+    min_point = 1000.0
+    count = 0
+    avg = 0.0
     homework_id = request.GET['id']
     homework = get_object_or_404(Homework, pk=homework_id)
     submit_list = homework.submit_set.all()
+    for submit in submit_list:
+        if submit.score != 0:
+            total_point += submit.score
+            count += 1
+            if submit.score > max_point:
+                max_point = submit.score
+            if submit.score < min_point:
+                min_point = submit.score
+    if count != 0:
+        avg = total_point / count
+    else:
+        min_point = 0.0
     SubmitFormSet = formset_factory(SubmitForm, extra=0)
     if request.method == 'POST':
         formset = SubmitFormSet(request.POST)
@@ -156,10 +178,32 @@ def check_homework(request):
                 submit.score = form.cleaned_data['score']
                 submit.remark = form.cleaned_data['remark']
                 submit.save()
+        return HttpResponse("<script>alert('提交成功!');window.location.href='/teach/check_homework?id="+homework_id+"'</script>")
     else:
         formset_init = [{'submit_id': submit.id, 'score': submit.score, 'remark': submit.remark} for submit in submit_list]
         formset = SubmitFormSet(initial=formset_init)
-    for submit in submit_list:
-        print(submit.score)
-    return render(request, 'teacher_homework_correct.html', {'formset': formset, 'submit_list': submit_list})
-        
+    # for submit in submit_list:
+    #     print(submit.score)
+        check_homework_info = zip(formset, submit_list)
+    # check_homework_range = range(0, len(submit_list))
+        return render(request, 'teacher_homework_correct.html', {'check_homework_info': check_homework_info, 'homework': homework,
+                "count": count, "avg": avg, "max": max_point, "min": min_point, "form_num": len(submit_list)})
+
+def friendly_link(request):
+    return render(request, "friendly_link.html")
+
+def help_page(request):
+    return render(request, "help.html")
+
+def get_unread_message_number(request):
+    if not request.user.is_authenticated() or hasattr(request.user, 'teacher'):
+        return HttpResponse(0)
+    count = 0
+    user = request.user
+    course_list = user.student.course_set.all()
+    notice_list = Notice.objects.order_by('-post_time').all()
+    for notice in notice_list:
+        if notice.course in course_list:
+            if user.student in notice.student.all():
+                count += 1
+    return HttpResponse(count)

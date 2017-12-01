@@ -72,5 +72,4 @@ def change_pwd(request):
 def home(request):
     return render(request, 'base.html')
 
-# TODO: 帮助页面
 # TODO: 重置密码邮件发送

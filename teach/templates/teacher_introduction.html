@@ -13,10 +13,16 @@
                 <br>
                 <hr>
                 <br>
-                <!-- Info -->
-                <p>
-                      
-                </p>
+                <p>教师姓名: {{ teacher_info.teacher.last_name }}{{ teacher_info.teacher.first_name }}</p>
+                <p>电子邮箱: <a href="mailto: {{ teacher_info.teacher.email }}">{{ teacher_info.teacher.email }}</a></p>
+                <p>院校: {{ teacher_info.college }}</p>
+                <p>学院: {{ teacher_info.department }}</p>
+                <p>电话: {{ teacher_info.phone }}</p>
+                <p>教学成果: {{ teacher_info.desc_achive }}</p>
+                <p>教学风格: {{ teacher_info.desc_teach_type }}</p>
+                <p>出版作品: {{ teacher_info.desc_publish }}</p>
+                <p>所获荣誉: {{ teacher_info.desc_honor }}</p>
+                <p>更多信息: {{ teacher_info.desc_more }}</p>
             </div>
         </div>
     </div>

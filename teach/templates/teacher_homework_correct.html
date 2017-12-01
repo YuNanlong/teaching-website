@@ -3,51 +3,53 @@
 {% block title %}批改作业{% endblock title %}
 
 {% block content %}
-<!-- FOR TEST -->
-<form method="post" action="">
-        {% csrf_token %}
-        <!-- 以下这一句必须有! -->
-        {{ formset.management_form }}
-        <table>
-            {% for form in formset %}
-            {{ form }}
-            {% endfor %}
-        </table>
-        <button type="submit" class="btn btn-primary">提交</button>
-    </form>
+<!-- TODO：添加作业下载链接 -->
     <div class="row clearfix">
         <div class="col-md-12">
-                {% for submit in submit_list %}
-                <p>{{submit.score}}</p>
-                {% endfor %}
             <h1>
-                批改作业<!-- Course -->
+                {{ homework.plan.course.name }}作业批改
             </h1>
-            <p>
-                当前作业信息: <span></span>
-            </p>
-            <br>
-            <hr>
             <br>
             <div class="row clearfix">
+                <div class="col-md-6">
+                    <label>当前周:</label><span>{{ homework.plan.week_num }}</span>
+                </div>
+                <div class="col-md-6">
+                    <label>截止日期:</label><span>{{ homework.deadline }}</span>
+                </div>
+            </div>
+            <hr>
+            <div class="row clearfix">
                 <div class="col-md-12">
-                    <form class="form" method="post" action="#">
+                    <form class="form" method="post">
+                        {% csrf_token %}
+                        <input id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="{{ form_num }}" />
+                        <input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="{{ form_num }}" />
+                        <input id="id_form-MIN_NUM_FORMS" name="form-MIN_NUM_FORMS" type="hidden" value="0" />
+                        <input id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="1000" />
                         <table class="table table-hover">
                             <thead>
                             <tr>
+                                <th>Submit ID</th>
                                 <th>学生用户名</th>
                                 <th>作业下载链接</th>
-                                <th>当前学生作业评分</th>
-                                <th>新的评分</th>
+                                <th>附加信息</th>
+                                <th>评分</th>
+                                <th>评语</th>
                             </tr>
                             </thead>
                             <tbody>
+                            {% for info in check_homework_info %}
                             <tr>
-                                <td><input class="form-control" type="text" name="user_1" value="user1" readonly></td>
-                                <td><a href="#">link</a></td>
-                                <td>95</td>
-                                <td><input class="form-control" type="text" name="score_1"></td>
+                                <td><input class="form-control" type="text" name="{{ info.0.submit_id.html_name }}"
+                                    value="{{ info.0.submit_id.value }}" readonly></td>
+                                <td>{{ info.1.student.student.username }}</td>
+                                <td>{{ info.1.comment }}</td>
+                                <td><a href="#">点此下载作业</a></td>
+                                <td><input class="form-control" type="text" name="{{ info.0.score.html_name }}" value="{{ info.0.score.value }}"></td>
+                                <td><input class="form-control" type="text" name="{{ info.0.remark.html_name }}" value="{{ info.0.remark.value }}"></td>
                             </tr>
+                            {% endfor %}
                             </tbody>
                         </table>
                         <br>
@@ -62,22 +64,24 @@
                 <h1>
                     当前作业得分情况<!-- Course -->
                 </h1>
+                <hr>
                 <div class="col-md-3">
-                    <label>提交人数: </label><span></span>
+                    <label>提交人数: </label><span>{{ count }}</span>
                 </div>
                 <div class="col-md-3">
-                    <label>平均分: </label><span></span>
+                    <label>平均分: </label><span>{{ avg }}</span>
                 </div>
                 <div class="col-md-3">
-                    <label>最高分: </label><span></span>
+                    <label>最高分: </label><span>{{ max }}</span>
                 </div>
                 <div class="col-md-3">
-                    <label>最低分: </label><span></span>
+                    <label>最低分: </label><span>{{ min }}</span>
                 </div>
             </div>
         </div>
-    </div>
 
+    </div>
+    <hr>
 {% endblock content %}
 
 {% block script %}

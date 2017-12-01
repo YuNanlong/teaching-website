@@ -3,18 +3,6 @@
 {% block title %}修改课程计划{% endblock %}
 
 {% block content %}
-    <!-- FOR TEST -->
-    <form method="post" action="">
-        {% csrf_token %}
-        <!-- 以下这一句必须有! -->
-        {{ formset.management_form }}
-        <table>
-            {% for form in formset %}
-            {{ form }}
-            {% endfor %}
-        </table>
-        <button type="submit" class="btn btn-primary">提交教学计划</button>
-    </form>
     <!-- 修改课程计划，一次Section 周数只能设置一次 -->
     <div class="row clearfix">
         <div class="col-md-12">
@@ -24,27 +12,45 @@
                 <br>
                 <hr>
                 <label>教学计划</label>
-                <form method="post" class="form" action="#">
-                    <label for="id_for_week_number">周数</label>
-                    <input class="form-control" type="text" name="week_number" id="id_for_week_number">
+                <form method="post" class="form">
+                    {% csrf_token %}
+                    {{ formset.management_form }}
                     <table class="table table-hover table-bordered">
                     <thead>
                         <tr>
                             <th>
-                                Week
+                                周
                             </th>
                             <th>
-                                Date
+                                日期
                             </th>
                             <th>
-                                Topic
+                                主题
                             </th>
                         </tr>
                     </thead>
                     <tbody id="id_table_body">
-                        
+                        {% for form in formset %}
+                        <tr>
+                            {% for field in form %}
+                            <td>
+                                {% if "week_num" in field.html_name %}
+                                    <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}"
+                                         value="{{ field.value }}" required readonly/>
+                                {% elif "date" in field.html_name %}
+                                    <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}"
+                                         value="{{ field.value }}" required/>
+                                {% else %}
+                                    <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}"
+                                         value="{{ field.value }}"/>
+                                {% endif %}
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
+                <p class="help-block">日期请按照格式: [x]年[x]月[x]日</p>
                 <button type="submit" class="btn btn-primary">提交教学计划</button>
             </form>
         </div>
