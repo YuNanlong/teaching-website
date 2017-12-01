@@ -1,0 +1,221 @@
+<!-- NOTICE: This page can be used as the home page of the forum -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}搜索结果{% endblock %}</title>
+</head>
+<body>
+<div class="container">
+	<!-- Navbar -->
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="navbar-header">
+					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					 	<span class="sr-only">Toggle navigation</span><span class="icon-bar"></span>
+					 	<span class="icon-bar"></span>
+					 	<span class="icon-bar"></span>
+					 </button>
+					 <a class="navbar-brand" href="/teach/detail/?course={{course_name}}">{{course_name}}</a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active">
+							 <a>欢迎: {{ user.username }}</a>
+						</li>
+                        <li class="active">
+                            <a href="/forum/homepage={{course_id}}">返回</a>
+                        </li>
+					</ul>
+				</div>
+			</nav>
+			<div class="container-fluid">
+			    <div class="row-fluid">
+			        <div class="span12">
+			            <h2>
+			                <br />
+			            </h2>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+
+	{% block content %}
+    {% if not user.is_authenticated %}
+    <div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="jumbotron">
+				<h1>
+					请登录网站!
+				</h1>
+				<p>
+					您还没有登录软件工程教学辅助网站，请回到登录界面！
+                </p>
+				<p>
+					 <a class="btn btn-primary btn-large" href="/accounts/login/">返回登录界面</a>
+				</p>
+			</div>
+		</div>
+	</div>
+    {% else %}
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+
+
+
+            <div class="tabbable" id="tabs-701698">
+				<div class="tab-content">
+                    {% for item in page_list %}
+                    {% ifequal item.page_id 1 %}
+					<div class="tab-pane active" id="page-1">
+						<p>
+                            <table class="table table-bordered"><!--style="table-layout:fixed;width:95%;word-wrap:break-word"-->
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            标题
+                                        </th>
+                                        <th width="250px">
+                                            发帖人
+                                        </th>
+                                        <th width="125px">
+                                            帖子类型
+                                        </th>
+                                        <th width="125px">
+                                            发帖时间
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for posts in item.post_list %}
+                                        {% ifequal posts.is_best 1 %}
+                                        <tr class="success">
+                                        {% else %}
+                                        <tr>
+                                        {% endifequal %}
+                                            <td>
+                                                <a href="/forum/watch_post={{posts.id}}/">{{posts.title}}</a>
+                                            </td>
+                                            <td>{{posts.poster.name}}</td>
+                                            {% ifequal posts.is_best 0 %}
+                                            <td>普通帖</td>
+                                            {% else %}
+                                            <td>精华帖</td>
+                                            {% endifequal %}
+                                            <td>{{posts.time}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+						</p>
+					</div>
+                    {% else %}
+                    <div class="tab-pane" id="page-{{item.page_id}}">
+						<p>
+                            <table class="table table-bordered"><!--style="table-layout:fixed;width:95%;word-wrap:break-word"-->
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            标题
+                                        </th>
+                                        <th width="250px">
+                                            发帖人
+                                        </th>
+                                        <th width="125px">
+                                            帖子类型
+                                        </th>
+                                        <th width="125px">
+                                            发帖时间
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for posts in item.post_list %}
+                                        <tr>
+                                            <td>
+                                                <a href="/forum/watch_post={{posts.id}}/">{{posts.title}}</a>
+                                            </td>
+                                            <td>{{posts.poster.name}}</td>
+                                            <td>{{posts.is_best}}</td>
+                                            <td>{{posts.time}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+						</p>
+					</div>
+                    {% endifequal %}
+                    {% endfor %}
+				</div>
+
+
+                <ul class="pagination">
+                    {% for item in page_list %}
+                    {% ifequal item.page_id 1 %}
+					<li class="active">
+						 <a href="#page-{{item.page_id}}" data-toggle="tab">{{item.page_id}}</a>
+					</li>
+                    {% else %}
+                    <li>
+						 <a href="#page-{{item.page_id}}" data-toggle="tab">{{item.page_id}}</a>
+					</li>
+                    {% endifequal %}
+                    {% endfor %}
+				</ul>
+
+			</div>
+
+
+
+
+
+		</div>
+	</div>
+    {% endif %}
+	{% endblock content %}
+</div>
+
+
+<div class="footer">
+<footer style="text-align: center;">
+  <p>Posted by: G01 2017. Contact information: <a href="mailto:teachingwebsite@126.com">teachingwebsite@126.com</a>.</p>
+</footer>
+</div>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/jquery.form/4.2.2/jquery.form.js"></script>
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- 可选的Bootstrap主题文件（一般不使用） -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap-theme.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap-theme.min.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.min.css"></script>
+
+<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+
+<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
+{% block script %}
+{% endblock script %}
+
+</body>
+</html>

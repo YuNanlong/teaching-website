@@ -19,7 +19,7 @@
 					 	<span class="icon-bar"></span>
 					 	<span class="icon-bar"></span>
 					 </button>
-					 <a class="navbar-brand" href="返回课程主页">{{course_name}}</a>
+					 <a class="navbar-brand" href="/teach/detail/?course={{course_name}}">{{course_name}}</a>
 				</div>
 
 				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -29,13 +29,13 @@
 							 <a>欢迎: {{ user.username }}</a>
 						</li>
                         <li class="active">
-                            <a href="返回课程主页">返回</a>
+                            <a href="/teach/detail/?course={{course_name}}">返回</a>
                         </li>
 					</ul>
                     {% else %}
                     <ul class="nav navbar-nav">
 						<li class="active">
-							 <a href="/account/login/">登录</a>
+							 <a href="/accounts/login/">登录</a>
 						</li>
 					</ul>
                     {% endif %}
@@ -50,21 +50,21 @@
 
 								{% if not user.teacher %}
                                 <li>
-                                     <a href="#">通知</a>
+                                     <a align="center" href="#">通知</a>
                                 </li>
                                 {% endif %}
                                 {% if user.teacher %}
 								<li>
-                                    <a id="modal-2" href="#modal-container-2" role="button" class="btn" data-toggle="modal">管理板块</a>
+                                    <a id="modal-2" href="#modal-container-2" role="button" data-toggle="modal">管理板块</a>
 								</li>
                                 {% endif %}
                                 <li>
-                                    <a class="btn" id="modal-1" href="#modal-container-1" role="button" data-toggle="modal" >发帖</a>
+                                    <a id="modal-1" href="#modal-container-1" role="button" data-toggle="modal" >发帖</a>
                                 </li>
 								<li class="divider">
 								</li>
 								<li>
-									 <a href="/account/logout">登出</a>
+									 <a href="/accounts/logout">登出</a>
 								</li>
 							</ul>
 						</li>
@@ -103,12 +103,17 @@
                     </h4>
                 </div>
                 <div class="modal-body">
-                    <form role="form" action="/forum/delete-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                    <div id='display_section'></div>
+                    <form role="form" action="/forum/delete-section={{course_id}}/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label>请选择要删除的版块</label>
                             <select class="form-control" id= "section_to_delete" name="delete_section_id">
                                 {% for item in section_list%}
+                                {% ifequal item.section_id "null" %}
+                                {% else %}
                                 <option value="{{item.section_id}}">{{item.section_name}}</option>
+                                {% endifequal %}
                                 {% endfor %}
                             </select>
                         </div>
@@ -117,13 +122,14 @@
                         </div>
                     </form>
 
-                    <form role="form" action="/forum/add-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                    <form name="section_add" role="form" action="/forum/add-section={{course_id}}/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label>请输入要添加的板块标题:</label>
                             <input class="form-control" id="section_to_add" type="text" name="add_section_name" style="height: 50px"/>
                         </div>
                         <div class="form-group">
-                            <input type="submit" class="btn btn-primary" value="添加" id="add_section_button" >
+                            <input type="button" class="btn btn-primary" value="添加" id="add_section_button" onClick="add_section();">
                         </div>
                     </form>
                 </div>
@@ -153,7 +159,8 @@
                         </h4> 请时刻注意您发表的<strong>言论</strong>，不要进行不恰当的发言。
                     </div>
                     <div id='display'></div>
-                    <form role="form" action="/forum/release-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                    <form name="post_release" role="form" action="/forum/release-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
                         <div class="form-group">
                             <label>请选择发表的版块</label>
                             <select class="form-control" id= "section" name="post_sectionid">
@@ -169,12 +176,12 @@
                         <div class="form-group">
                             <label>请输入帖子内容：</label><br>
                             <p></p>
-                            <textarea style="resize: none; width : 560px; height: 180px;" name="post_content" id="contnet" class="j_enter" rows="8"></textarea>
+                            <textarea style="resize: none; width : 560px; height: 180px;" name="post_content" id="content" class="j_enter" rows="8"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="file" name="post_file" />
                             <br>
-                            <input type="submit" class="btn btn-primary" value="发表" id="submit" onClick="nextline()" >
+                            <input type="button" class="btn btn-primary" value="发表" id="release" onClick="nextline();" >
                         </div>
                     </form>
                 </div>
@@ -198,7 +205,7 @@
 				<p>
                     {% if not user.is_authenticated %}
 					如果你是学生或者教师，点击“登录”按钮以登录。
-                    <a class="btn btn-primary btn-large" href="account/login">登录</a>
+                    <a class="btn btn-primary btn-large" href="accounts/login">登录</a>
                     {% endif %}
 				</p>
 				<p>
@@ -213,17 +220,33 @@
 
 	<div class="row clearfix">
 		<div class="col-md-12 column">
+            <div id='display_search'></div>
+            <form name="search_form" role="form" action="/forum/search={{course_id}}/" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-group">
+                    <label>请输入要搜索的内容:</label>
+                    <input class="form-control" id="search-id" type="text" name="search_content" style="height: 50px"/>
+                    <input type="button" class="btn btn-primary" value="搜索" id="search_button" onClick="search();"/>
+                </div>
+            </form>
             <div class="tabbable" id="tabs-701698">
 				<ul class="nav nav-tabs">
                     {% for item in section_list %}
+                    {% ifequal item.section_id "null" %}
 					<li class="active">
 						 <a href="#section-{{item.section_id}}" data-toggle="tab">{{item.section_name}}</a>
 					</li>
+                    {% else %}
+                    <li>
+						 <a href="#section-{{item.section_id}}" data-toggle="tab">{{item.section_name}}</a>
+					</li>
+                    {% endifequal %}
                     {% endfor %}
 				</ul>
 				<div class="tab-content">
                     {% for item in section_list %}
-					<div class="tab-pane active" id="section-{{item.section_id}}">
+                    {% ifequal item.section_id "null" %}
+					<div class="tab-pane active" id="section-null">
 						<p>
                             <table class="table table-bordered"><!--style="table-layout:fixed;width:95%;word-wrap:break-word"-->
                                 <thead>
@@ -244,12 +267,20 @@
                                 </thead>
                                 <tbody>
                                     {% for posts in item.post_list %}
+                                        {% ifequal posts.is_best 1 %}
+                                        <tr class="success">
+                                        {% else %}
                                         <tr>
+                                        {% endifequal %}
                                             <td>
                                                 <a href="/forum/watch_post={{posts.id}}/">{{posts.title}}</a>
                                             </td>
                                             <td>{{posts.poster}}</td>
-                                            <td>{{posts.is_best}}</td>
+                                            {% ifequal posts.is_best 0 %}
+                                            <td>普通帖</td>
+                                            {% else %}
+                                            <td>精华帖</td>
+                                            {% endifequal %}
                                             <td>{{posts.time}}</td>
                                         </tr>
                                     {% endfor %}
@@ -257,6 +288,50 @@
                             </table>
 						</p>
 					</div>
+                    {% else %}
+                    <div class="tab-pane" id="section-{{item.section_id}}">
+						<p>
+                            <table class="table table-bordered"><!--style="table-layout:fixed;width:95%;word-wrap:break-word"-->
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            标题
+                                        </th>
+                                        <th width="250px">
+                                            发帖人
+                                        </th>
+                                        <th width="125px">
+                                            帖子类型
+                                        </th>
+                                        <th width="125px">
+                                            发帖时间
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for posts in item.post_list %}
+                                        {% ifequal posts.is_best 1 %}
+                                        <tr class="success">
+                                        {% else %}
+                                        <tr>
+                                        {% endifequal %}
+                                            <td>
+                                                <a href="/forum/watch_post={{posts.id}}/">{{posts.title}}</a>
+                                            </td>
+                                            <td>{{posts.poster}}</td>
+                                            {% ifequal posts.is_best 0 %}
+                                            <td>普通帖</td>
+                                            {% else %}
+                                            <td>精华帖</td>
+                                            {% endifequal %}
+                                            <td>{{posts.time}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+						</p>
+					</div>
+                    {% endifequal %}
                     {% endfor %}
 				</div>
 			</div>
@@ -301,8 +376,43 @@
     var txt = "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4>注意!</h4> 标题和内容均<strong>不能为空</strong>，且标题不超过<strong>25个字</strong>，内容不超过<strong>1000个字</strong>。</div>";
     function nextline()
 	{
-		document.getElementById('display').innerHTML = txt;
+        title = document.getElementById('title').value;
+	    content = document.getElementById('content').value;
+	    if(title.length <= 0 || title.length > 25 || content.length <= 0 || content.length > 1000)
+		    document.getElementById('display').innerHTML = txt;
+		else
+		{
+		    var form = document.forms['post_release'];
+		    form.submit();
+		}
     }
+
+    var sectiontxt = "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4>注意!</h4> 版块标题<strong>不能为空</strong>，且不超过<strong>10个字</strong>。</div>";
+    function add_section()
+	{
+	    content = document.getElementById('section_to_add').value;
+	    if(content.length <= 0 || content.length > 10)
+		    document.getElementById('display_section').innerHTML = sectiontxt;
+		else
+		{
+		    var form = document.forms['section_add'];
+		    form.submit();
+		}
+    }
+
+    var searchtxt = "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4>注意!</h4> 搜索内容<strong>不能为空</strong>，且不超过<strong>50个字</strong>。</div>";
+    function search()
+	{
+	    content = document.getElementById('search-id').value;
+	    if(content.length <= 0 || content.length > 10)
+		    document.getElementById('display_search').innerHTML = searchtxt;
+		else
+		{
+		    var form = document.forms['search_form'];
+		    form.submit();
+		}
+    }
+
 </script>
 {% endblock script %}
 
