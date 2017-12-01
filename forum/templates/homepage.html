@@ -1,0 +1,310 @@
+<!-- NOTICE: This page can be used as the home page of the forum -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}{{course_name}}-课程讨论区{% endblock %}</title>
+</head>
+<body>
+<div class="container">
+	<!-- Navbar -->
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="navbar-header">
+					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					 	<span class="sr-only">Toggle navigation</span><span class="icon-bar"></span>
+					 	<span class="icon-bar"></span>
+					 	<span class="icon-bar"></span>
+					 </button>
+					 <a class="navbar-brand" href="返回课程主页">{{course_name}}</a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    {% if user.is_authenticated %}
+					<ul class="nav navbar-nav">
+						<li class="active">
+							 <a>欢迎: {{ user.username }}</a>
+						</li>
+                        <li class="active">
+                            <a href="返回课程主页">返回</a>
+                        </li>
+					</ul>
+                    {% else %}
+                    <ul class="nav navbar-nav">
+						<li class="active">
+							 <a href="/account/login/">登录</a>
+						</li>
+					</ul>
+                    {% endif %}
+					<ul class="nav navbar-nav navbar-right">
+						<li>
+							 <a href="#">课程讨论区使用帮助</a>
+						</li>
+						{% if user.is_authenticated %}
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
+							<ul class="dropdown-menu">
+
+								{% if not user.teacher %}
+                                <li>
+                                     <a href="#">通知</a>
+                                </li>
+                                {% endif %}
+                                {% if user.teacher %}
+								<li>
+                                    <a id="modal-2" href="#modal-container-2" role="button" class="btn" data-toggle="modal">管理板块</a>
+								</li>
+                                {% endif %}
+                                <li>
+                                    <a class="btn" id="modal-1" href="#modal-container-1" role="button" data-toggle="modal" >发帖</a>
+                                </li>
+								<li class="divider">
+								</li>
+								<li>
+									 <a href="/account/logout">登出</a>
+								</li>
+							</ul>
+						</li>
+                        <li>
+
+                        </li>
+						{% endif %}
+						<li>
+							<a>    </a>
+						</li>
+					</ul>
+				</div>
+			</nav>
+			<div class="container-fluid">
+			    <div class="row-fluid">
+			        <div class="span12">
+			            <h2>
+			                <br />
+			            </h2>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+
+	{% block content %}
+
+    <!--遮罩窗体——管理板块-->
+    <div class="modal fade" id="modal-container-2" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="myModalLabel">
+                        管理板块
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <form role="form" action="/forum/delete-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>请选择要删除的版块</label>
+                            <select class="form-control" id= "section_to_delete" name="delete_section_id">
+                                {% for item in section_list%}
+                                <option value="{{item.section_id}}">{{item.section_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="删除" id="delete_section_button" >
+                        </div>
+                    </form>
+
+                    <form role="form" action="/forum/add-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>请输入要添加的板块标题:</label>
+                            <input class="form-control" id="section_to_add" type="text" name="add_section_name" style="height: 50px"/>
+                        </div>
+                        <div class="form-group">
+                            <input type="submit" class="btn btn-primary" value="添加" id="add_section_button" >
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!--遮罩窗体——发帖-->
+    <div class="modal fade" id="modal-container-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title" id="releasePost">
+                        发帖
+                    </h4>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-warning alert-dismissable">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                        <h4>
+                            注意!
+                        </h4> 请时刻注意您发表的<strong>言论</strong>，不要进行不恰当的发言。
+                    </div>
+                    <div id='display'></div>
+                    <form role="form" action="/forum/release-post={{course_id}}/" method="post" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label>请选择发表的版块</label>
+                            <select class="form-control" id= "section" name="post_sectionid">
+                                {% for item in section_list%}
+                                <option value="{{item.section_id}}">{{item.section_name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>请输入帖子标题:</label>
+                            <input class="form-control" id="title" type="text" name="post_title" style="height: 50px"/>
+                        </div>
+                        <div class="form-group">
+                            <label>请输入帖子内容：</label><br>
+                            <p></p>
+                            <textarea style="resize: none; width : 560px; height: 180px;" name="post_content" id="contnet" class="j_enter" rows="8"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <input type="file" name="post_file" />
+                            <br>
+                            <input type="submit" class="btn btn-primary" value="发表" id="submit" onClick="nextline()" >
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="jumbotron">
+				<h1>
+					{{course_name}}讨论区
+				</h1>
+				<p>
+					参加本课程学生和教师可以在{{course_name}}讨论区讨论问题.
+				</p>
+				<p>
+                    {% if not user.is_authenticated %}
+					如果你是学生或者教师，点击“登录”按钮以登录。
+                    <a class="btn btn-primary btn-large" href="account/login">登录</a>
+                    {% endif %}
+				</p>
+				<p>
+                    点击“帮助”按钮可查看系统帮助。
+                    <a class="btn btn-primary btn-large" href="#">帮助</a>
+				</p>
+                <p>
+                </p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+            <div class="tabbable" id="tabs-701698">
+				<ul class="nav nav-tabs">
+                    {% for item in section_list %}
+					<li class="active">
+						 <a href="#section-{{item.section_id}}" data-toggle="tab">{{item.section_name}}</a>
+					</li>
+                    {% endfor %}
+				</ul>
+				<div class="tab-content">
+                    {% for item in section_list %}
+					<div class="tab-pane active" id="section-{{item.section_id}}">
+						<p>
+                            <table class="table table-bordered"><!--style="table-layout:fixed;width:95%;word-wrap:break-word"-->
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            标题
+                                        </th>
+                                        <th width="250px">
+                                            发帖人
+                                        </th>
+                                        <th width="125px">
+                                            帖子类型
+                                        </th>
+                                        <th width="125px">
+                                            发帖时间
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for posts in item.post_list %}
+                                        <tr>
+                                            <td>
+                                                <a href="/forum/watch_post={{posts.id}}/">{{posts.title}}</a>
+                                            </td>
+                                            <td>{{posts.poster}}</td>
+                                            <td>{{posts.is_best}}</td>
+                                            <td>{{posts.time}}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+						</p>
+					</div>
+                    {% endfor %}
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endblock content %}
+</div>
+
+<div class="footer">
+<footer style="text-align: center;">
+  <p>Posted by: G01 2017. Contact information: <a href="mailto:teachingwebsite@126.com">teachingwebsite@126.com</a>.</p>
+</footer>
+</div>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/jquery.form/4.2.2/jquery.form.js"></script>
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- 可选的Bootstrap主题文件（一般不使用） -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap-theme.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap-theme.min.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.min.css"></script>
+
+{% block script %}
+<script>
+    var status = "{{ status }}";
+    if(status != "true")
+        alert(status);
+    var txt = "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4>注意!</h4> 标题和内容均<strong>不能为空</strong>，且标题不超过<strong>25个字</strong>，内容不超过<strong>1000个字</strong>。</div>";
+    function nextline()
+	{
+		document.getElementById('display').innerHTML = txt;
+    }
+</script>
+{% endblock script %}
+
+</body>
+</html>
