@@ -1,14 +1,17 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.forms.formsets import formset_factory
+from teachingwebsite import videoManager
 from .models import *
 from account.models import *
 from .forms import *
 import os, sys
 from django.http import StreamingHttpResponse
 
+
 def teach_detail(request):
-    course_name = request.GET['course'] # 获取url中的课程名
+    course_name = request.GET['course']  # 获取url中的课程名
     user = request.user
     course = get_object_or_404(Course, name=course_name)
     plan_list = course.plan_set.order_by('week_num')
@@ -37,14 +40,17 @@ def teach_detail(request):
             status = 1
         else:
             status = 0
-    elif hasattr(user, 'teacher') == True:  
+    elif hasattr(user, 'teacher') == True:
         if user in course.teacher.all():
             status = 1
         else:
             status = 0
     else:
         status = 0
-    return render(request, 'teach_detail.html', {'status': status, 'course': course, 'plan_list': plan_list, 'video_list': video_list, 'classware_list': classware_list, 'homework_list': homework_list})
+    return render(request, 'teach_detail.html',
+                  {'status': status, 'course': course, 'plan_list': plan_list, 'video_list': video_list,
+                   'classware_list': classware_list, 'homework_list': homework_list})
+
 
 @login_required
 def teacher_introduction(request):
@@ -52,13 +58,14 @@ def teacher_introduction(request):
     teacher_info = get_object_or_404(Teacher, pk=teacher_id)
     return render(request, 'teacher_introduction.html', {'teacher_info': teacher_info})
 
+
 @login_required
 def edit_schedule(request):
     course_name = request.GET['course']
     course = get_object_or_404(Course, name=course_name)
     if len(course.plan_set.all()) == 0:
         for i in range(course.week):
-            plan = Plan(week_num = i + 1, date='2017-01-01', course=course)
+            plan = Plan(week_num=i + 1, date='2017-01-01', course=course)
             plan.save()
     plan_list = course.plan_set.all()
     PlanFormSet = formset_factory(PlanForm, extra=0)
@@ -75,6 +82,7 @@ def edit_schedule(request):
         formset_init = [{'week_num': plan.week_num, 'date': plan.date, 'topic': plan.topic} for plan in plan_list]
         formset = PlanFormSet(initial=formset_init)
     return render(request, 'teacher_schedule.html', {'formset': formset})
+
 
 @login_required
 def check_notice(request):
@@ -93,6 +101,7 @@ def check_notice(request):
             related_notice.append(notice)
     return render(request, 'student_notice.html', {'related_notice': related_notice})
 
+
 @login_required
 def upload_classware(request):
     course_name = request.GET['course']
@@ -109,9 +118,11 @@ def upload_classware(request):
         form = ClasswareForm()
     return render(request, 'teacher_courseware.html', {'form': form})
 
+
 @login_required
 def download_classware(request):
     filename = request.GET['classware']
+
     def read_file(filepath, chunk_size=10000):
         file = open(filepath, 'rb')
         while True:
@@ -120,28 +131,31 @@ def download_classware(request):
                 yield chunk
             else:
                 break
+
     response = StreamingHttpResponse(read_file('media/classware/' + str(filename)))
     response['Content-Disposition'] = 'attachment; filename=' + str(filename)
     response['Content-Type'] = 'application/octet-stream'
     return response
+
 
 @login_required
 def delete_classware(request):
     if request.method == 'POST':
         delete_id_list = list(request.POST.items())
         for delete_id in delete_id_list:
-            if delete_id[0] != 'csrfmiddlewaretoken':  
+            if delete_id[0] != 'csrfmiddlewaretoken':
                 classware = get_object_or_404(Classware, pk=delete_id[1][0])
                 classware.delete()
-        return redirect('home') 
+        return redirect('home')
     else:
         course_name = request.GET['course']
         course = get_object_or_404(Course, name=course_name)
         plan_list = course.plan_set.all()
         classware_list = []
         for plan in plan_list:
-            classware_list.extend(plan.classware_set.all())          
+            classware_list.extend(plan.classware_set.all())
         return render(request, 'teacher_courseware_delete.html', {'classware_list': classware_list})
+
 
 def check_homework(request):
     homework_id = request.GET['id']
@@ -157,9 +171,105 @@ def check_homework(request):
                 submit.remark = form.cleaned_data['remark']
                 submit.save()
     else:
-        formset_init = [{'submit_id': submit.id, 'score': submit.score, 'remark': submit.remark} for submit in submit_list]
+        formset_init = [{'submit_id': submit.id, 'score': submit.score, 'remark': submit.remark} for submit in
+                        submit_list]
         formset = SubmitFormSet(initial=formset_init)
     for submit in submit_list:
         print(submit.score)
     return render(request, 'teacher_homework_correct.html', {'formset': formset, 'submit_list': submit_list})
-        
+
+
+def assign_homework(request):
+    course_name = request.GET['course']
+    course = get_object_or_404(Course, name=course_name)
+    if request.method == 'POST':
+        form = HomeworkForm(request.POST, request.FILES)
+        if form.is_valid():
+            plan = course.plan_set.filter(week_num=request.POST['week_num'])
+            if len(plan) > 0:
+                homework = Homework()
+                homework.enclosure = request.FILES['homework']
+                homework.deadline = form.deadline
+                homework.plan = plan[0]
+                homework.mark = form.mark
+                homework.statement = form.statement
+                homework.save()
+                name = homework.enclosure.name
+                homework.enclosure.name = 'homework' + str(homework.id) + '.' + name.split('.')[1]
+                homework.save()
+                return redirect('home')
+    else:
+        form = HomeworkForm()
+
+
+def edit_homework(request):
+    course_name = request.GET['course']
+    course = get_object_or_404(Course, name=course_name)
+    if request.method == 'POST':
+        form = HomeworkForm(request.POST, request.FILES)
+        if form.is_valid():
+            plan = course.plan_set.filter(week_num=request.POST['week_num'])
+            if len(plan) > 0:
+                homework = Homework()
+                homework.enclosure = request.FILES['homework']
+                homework.deadline = form.deadline
+                homework.plan = plan[0]
+                homework.mark = form.mark
+                homework.statement = form.statement
+                homework.save()
+                name = homework.enclosure.name
+                homework.enclosure.name = 'homework' + str(homework.id) + '.' + name.split('.')[1]
+                homework.save()
+                return redirect('home')
+    else:
+        form = HomeworkForm()
+
+
+def make_announcement(request):
+    if request.method == 'POST':
+        form = AnnouncementForm(request.POST)
+        if form.is_valid():
+            course = get_object_or_404(Course, name=form.course)
+            notice = Notice()
+            notice.course = course
+            for student in course.student.all():
+                notice.student.add(student)
+            notice.title = form.title
+            notice.content = form.content
+            notice.post_time = form.post_time
+            notice.save()
+            return redirect('home')
+        else:
+            return redirect('home')
+
+    else:
+        return redirect('home')
+
+
+def upload_video(request):
+    if request.method == 'POST':
+        video = Video()
+        courseName = request.POST['courseName']
+        if Course.objects.filter(name=courseName).exists():
+            course = Course.objects.get(name=courseName)
+            plan = course.plan_set.get(week_num=request.POST['week_num'])
+            video.plan = plan
+        else:
+            return redirect('home')
+        file = request.FILES['video']
+        data = file.read()
+        key = videoManager.upload(data)
+        url = videoManager.getBaseUrl(key)
+        video.url = url
+        video.save()
+        return JsonResponse(video.id)
+    return redirect('home')
+
+
+def watch_video(request):
+    id = request.GET['videoId']
+    if Video.objects.filter(id=id).exists():
+        video = Video.objects.get()
+        return JsonResponse(video.url)
+    else:
+        return HttpResponse('该影片不存在！')
