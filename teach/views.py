@@ -273,3 +273,22 @@ def watch_video(request):
         return JsonResponse(video.url)
     else:
         return HttpResponse('该影片不存在！')
+
+
+def submit_homework(request):
+    if request.method == 'POST':
+        form = StudentSubmitForm(request.POST, request.FILES)
+        if form.is_valid():
+            homework = Homework.objects.get(id=form.homework_id)
+            submit = Submit()
+            submit.homework = homework
+            if form.comment is not None:
+                submit.comment = form.comment
+            submit.student = request.user
+            submit.solution = form.submit
+            submit.save()
+            name = submit.solution.name
+            submit.solution.name = 'solution' + str(submit.id) + '.' + name.split('.')[1]
+            submit.save()
+    else:
+        form = StudentSubmitForm()

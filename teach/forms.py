@@ -28,8 +28,14 @@ class SubmitForm(forms.Form):
     remark = forms.CharField(max_length=800, required=False)
 
 
+class StudentSubmitForm(forms.Form):
+    homework_id = forms.IntegerField()
+    submit = forms.FileField()
+    comment = forms.CharField(max_length=200, required=False)
+
+
 class AnnouncementForm(forms.Form):
     course = forms.CharField(max_length=20, required=True)
     title = forms.CharField(max_length=60, required=True)  # 标题
-    content = forms.CharField(max_length=800,required=True)  # 内容
+    content = forms.CharField(max_length=800, required=True)  # 内容
     post_time = forms.DateTimeField()  # 发布时间
