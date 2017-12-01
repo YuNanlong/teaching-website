@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{% block title %}软件工程教学网站{% endblock %}</title>
+    <title>{% block title %}课程名XX{% endblock %}</title>
 </head>
 <body>
 <!-- TODO: 添加链接:通知, 未来可能需要修改url配置 -->
@@ -147,6 +147,14 @@
             <br><br>
         </div>
     </div>
+    {% for plan in plan_list %}
+        <p>{{ plan.topic }}</p>
+    {% endfor %}
+    {% for video in video_list %}
+        {% for url in video %}
+        <p>{{ url.url }}</p>
+        {% endfor %}
+    {% endfor %}
     <!-- 课程大纲 -->
     <div class="row clearfix">
         <div class="col-md-12 column">
@@ -298,6 +306,7 @@
             return unescape(r[2]);
         return null;
     }
+
     $(document).ready
     (
 

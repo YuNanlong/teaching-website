@@ -3,7 +3,39 @@
 {% block title %}查看个人通知{% endblock title %}
 
 {% block content %}
-
+    <!-- FOR TEST -->
+    {% for notice in related_notice %}
+    <p>{{ notice.title }}</p>
+    <p>{{ notice.is_read }}</p>
+    {% endfor %}
+    <div class="row clearfix">
+        <div class="col-md-12">
+                <h1>
+                    查看个人通知<!-- Course -->
+                </h1>
+                <br>
+                <hr>
+                <br>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>状态</th>
+                        <th>消息</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="danger">
+                        <td>未查看</td>
+                        <td>未查看的消息</td>
+                    </tr>
+                    <tr>
+                        <td>已查看</td>
+                        <td>已查看的消息</td>
+                    </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
 
 {% endblock content %}
 

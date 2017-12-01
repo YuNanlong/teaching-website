@@ -13,5 +13,4 @@ urlpatterns = [
     url(r'^resetpassword/passwordsent/$', auth_views.password_reset_done, name='password_reset_done'),
     url(r'^reset/done/$', auth_views.password_reset_complete, name='password_reset_complete'),
     url(r'^reset/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>.+)/$', auth_views.password_reset_confirm, name='password_reset_confirm'),
-    # FOR TEST
 ]
