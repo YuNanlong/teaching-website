@@ -36,7 +36,7 @@ def homepage(request, id, status = "true"):
         raise  Http404()
 
     course_name = course.name
-    sections = Section.objects.all().order_by("id")
+    sections = Section.objects.filter(course = course).order_by("id")
     section_list = []
 
     # 默认板块帖子
