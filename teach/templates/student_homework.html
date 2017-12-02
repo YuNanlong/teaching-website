@@ -3,12 +3,97 @@
 {% block title %}提交 & 查看作业{% endblock title %}
 
 {% block content %}
+    <div class="row clearfix">
+        <div class="col-md-12 column">
+                <h1>
+                    作业上传
+                </h1>
+                <br>
+                <hr>
 
+                <div class="row clearfix">
+                    <div class="col-md-6 column">
+                        <label>截止时间: </label><span>{{ deadline }}</span>
+                    </div>
+                    <div class="col-md-6 column">
+                        <label>当前作业提交状态: </label>
+                        {% if status %}
+                        <span>已提交</span>
+                        {% else %}
+                        <span>未提交</span>
+                        {% endif %}
+                    </div>
+                </div>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-3 column">
+                        <label>当前作业分数: </label><span>{{ score }}</span>
+                    </div>
+                    <div class="col-md-9 column">
+                        <label>评语: </label><span>{{ comment }}</span>
+                    </div>
+                </div>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <label>作业下载链接: </label><a href="{% url 'download_homework' %}?id={{ homework.id }}"><span>{{ homework.enclosure }}</span></a>
+                    </div>
+
+                </div>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                        <label>作业描述: </label><p>{{ homework.statement }}</p>
+                    </div>
+                </div>
+                <hr>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-12 column">
+                    <form method="post" class="form" enctype="multipart/form-data" action="#">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_for_week">当前课程:</label>
+                            <input type="text" name="course_name" id="id_for_week" class="form-control" value="{{ course_name }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_for_week">当前周:</label>
+                            <input type="text" name="week_num" id="id_for_week" class="form-control" value="{{ week_num }}" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_for_homework">作业附件:</label>
+                            <input type="file" name="homework" id="id_for_homework" class="form-control" required>
+                        </div>
+                        <p class="help-block">
+                            添加作业附件。
+                        </p>
+                        <div class="form-group">
+                            <label for="id_for_message">附加信息：</label>
+                            <textarea name="message" id="id_for_message" class="form-control" style="height: 200px; resize: none;"></textarea>
+                        </div>
+                        <button id="submit_button" type="submit" class="btn btn-primary">提交作业</button>
+                    </form>
+                    </div>
+                </div>
+        </div>
+    </div>
 
 {% endblock content %}
 
 {% block script %}
     <script type="text/javascript">
-
+        $(document).ready(
+            function ()
+            {
+                var currentDate = Date.parse(new Date()) - 86400000;
+                var deadline = "{{ deadline }}";
+                var deadlineDate = Date.parse(deadline.replace(/[年月日]/g,  "/"));
+                if(currentDate > deadlineDate)
+                {
+                    $("#submit_button").attr('disabled',"true")
+                        .text("已过期,禁止提交!");
+                }
+            }
+        );
     </script>
 {% endblock script %}

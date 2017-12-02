@@ -8,7 +8,6 @@
 	<title>{% block title %}软件工程教学网站{% endblock %}</title>
 </head>
 <body>
-<!-- TODO: 添加链接:通知，各个课程主页面，未来可能需要修改url配置 -->
 <div class="container">
 	<!-- Navbar -->
 	<div class="row clearfix">
@@ -42,16 +41,16 @@
                     {% endif %}
 					<ul class="nav navbar-nav navbar-right">
 						<li>
-							 <a href="#">使用帮助</a>
+							 <a href="{% url 'help' %}">使用帮助</a>
 						</li>
 						{% if user.is_authenticated %}
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
+							<a id="id_for_notice" href="#" class="dropdown-toggle" data-toggle="dropdown">通知及选项<strong class="caret"></strong></a>
 							<ul class="dropdown-menu">
 
 								{% if not user.teacher %}
                                 <li>
-                                     <a href="#">通知</a>
+                                     <a id="#id_for_message" href="{% url 'check_notice' %}">通知</a>
                                 </li>
                                 {% endif %}
 								<li>
@@ -102,7 +101,7 @@
                     {% if not user.is_authenticated %}
 					 <a class="btn btn-primary btn-large" href="{% url 'login' %}">登录</a>
                     {% endif %}
-					 <a class="btn btn-primary btn-large" href="#">帮助</a>
+					 <a class="btn btn-primary btn-large" href="/teach/help">帮助</a>
 				</p>
 			</div>
 		</div>
@@ -117,7 +116,7 @@
 				本课程是软件工程专业的基础性课程。课程主要介绍软件工程的基本概念、原则与方法，包括软件产品与过程、软件工程实践、Web软件工程、软件项目管理四部分，覆盖常见的过程模型，需求分析、设计、测试等软件开发阶段的基本任务，项目管理与质量保证的基本概念和方法，以及将Web应用作为一类特殊软件的开发方法介绍。课程旨在帮助学生理解系统、完整的软件工程方面的专业基础理论，建立起软件开发的工程概念和习惯，培养学生分析问题、解决问题，以及团队协作、谈判沟通等能力。
 			</p>
 			<p>
-				 <a class="btn" href="{% url 'teach_detail' %}?course=SE">查看课程内容</a>
+				 <a class="btn" href="{% url 'teach_detail' %}?course=软件工程基础">查看课程内容</a>
 			</p>
 		</div>
 		<div class="col-md-3 column">
@@ -128,7 +127,7 @@
 				本课程的主要任务是在软件工程整体知识的基础上，深入学习并实践软件需求获取与管理的原理、方法和过程，学习并掌握使用UML工具对软件需求进行分析、表达与系统设计。课程内容包括两部分：一是需求获取和维护的过程和方法，包括需求提取、需求分析和建模、需求表达、需求确认、需求变更控制，以及相应的工具；二是UML概念、方法和工具。课程配合案例性实践环节进行教学。通过本课程的学习，应使学生掌握如何在软件工程的实践中完成复杂软件需求的获取、表达和维护能力，学会应用UML进行软件需求分析与设计的技术和方法，为掌握软件工程的系统全面的知识和技能打下坚实基础。
 			</p>
 			<p>
-				 <a class="btn" href="{% url 'teach_detail' %}?course=SRE">查看课程内容</a>
+				 <a class="btn" href="{% url 'teach_detail' %}?course=软件需求工程">查看课程内容</a>
 			</p>
 		</div>
 		<div class="col-md-3 column">
@@ -139,7 +138,7 @@
 				本课程按软件测试的原理、技术和实践三部分组织内容，包括软件工程概述，软件测试和质量保证的基本概念、思想和方法，各种测试的方法和技巧，软件测试用例的设计；如何组织和管理软件测试项目、如何进行软件质量分析，最终建立全面的质量保证体系。
 			</p>
 			<p>
-				 <a class="btn" href="{% url 'teach_detail' %}?course=SQAT">查看课程内容</a>
+				 <a class="btn" href="{% url 'teach_detail' %}?course=软件质量保证与测试">查看课程内容</a>
 			</p>
 		</div>
 		<div class="col-md-3 column">
@@ -150,7 +149,7 @@
 				作为软件工程体系课程的重要组成部分，本课程培养学生今后作为软件项目开发人员涉及相关工作职责与管理技能等。通过案例分析和练习，使学生掌握项目管理的基本概念和方法，从软件项目的选择立项、计划、执行、控制、评价和终止过程指导学生理解软件开发的成本、时间、资源和性能约束的实践性管理问题，建立项目目标和客户满意的项目运做实践体系。通过案例分析，使学生在实践中合理选择软件生命周期模型，应用计划管理、成本管理、时间管理、资源管理、质量管理工具，实现项目目标。
 			</p>
 			<p>
-				 <a class="btn" href="{% url 'teach_detail' %}?course=SEM">查看课程内容</a>
+				 <a class="btn" href="{% url 'teach_detail' %}?course=软件工程管理">查看课程内容</a>
 			</p>
 		</div>
 	</div>
@@ -179,7 +178,25 @@
 
 
 
-{% block script %}{% endblock script %}
-
+{% block script %}
+{% endblock script %}
+<script type="text/javascript">
+    $(document).ready
+    (
+        function ()
+        {
+            $.get("{% url 'unread' %}",
+                function(ret)
+                {
+                    if(ret == 0)
+                        return;
+                    $("#id_for_notice").text("通知及选项(" + ret + ")");
+                    $("#id_for_notice").css("background-color", "red");
+                    $("#id_for_notice").css("color", "white");
+                    $("#id_for_message").text("您有未读通知(" + ret + ")");
+                });
+        }
+    );
+</script>
 </body>
 </html>

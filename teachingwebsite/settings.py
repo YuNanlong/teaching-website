@@ -112,6 +112,10 @@ ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 LOGIN_REDIRECT_URL = 'home'
 
+MEDIA_ROOT = 'media'
+
+MEDIA_URL = '/media/'
+
 # Django邮箱配置
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

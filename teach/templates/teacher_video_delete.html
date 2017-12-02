@@ -1,0 +1,91 @@
+{% extends "teach_detail.html" %}
+
+{% block title %}删除视频{% endblock title %}
+
+{% block content %}
+    <div class="row clearfix">
+        <div class="col-md-12">
+                <h1>
+                    删除视频<!-- Course -->
+                </h1>
+                <br>
+                <hr>
+                <p class="help-block">
+                    点击左侧复选框，选择要删除的视频，然后点击删除按钮即可。
+                </p>
+                <button class="btn btn-danger" id="id_for_delete_video">删除视频</button>
+                <br>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>.</th>
+                        <th>视频号</th>
+                        <th>周</th>
+                        <th>视频名</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in video %}
+                    <tr class="video">
+                        <td><input name="video_id" type="checkbox" value="{{ i.id }}"/></td>
+                        <td>{{ i.id }}</td>
+                        <td>{{ i.plan.week_num }}</td>
+                        <td>{{ i.url }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+        </div>
+    </div>
+
+{% endblock content %}
+
+{% block script %}
+    <script type="text/javascript">
+        $(document).ready
+        (
+            function ()
+            {
+                $.ajaxSetup(
+                    {
+                        data: {csrfmiddlewaretoken: '{{ csrf_token }}'} //为什么django写AJAX那么麻烦，操
+                    }
+                );
+                $("#id_for_delete_video").click
+                (
+
+                    function ()
+                    {
+                        var deletionList = new Array();
+
+                        $.each($('input:checkbox:checked'),
+                            function()
+                            {
+                                deletionList.push($(this).val());
+                            });
+
+                        $.ajax
+                        (
+                            {
+                                type:"POST",
+                                data: {deleteList: deletionList},
+                                url: "{% url 'delete_video' %}", //后台处理函数的url 这里用的是static url 需要与urls.py中的name一致
+                                cache: false,
+                                traditional: true,
+                                success: function(result)
+                                {
+                                    alert("删除成功!");
+                                    location.reload();
+                                    //成功时弹出view传回来的结果
+                                },
+                                error: function()
+                                {
+                                    alert("删除失败!");
+                                }
+                        });
+                    }
+                );
+            }
+        );
+    </script>
+{% endblock script %}
