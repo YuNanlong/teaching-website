@@ -1,0 +1,249 @@
+<!-- NOTICE: This page can be used as the home page of the forum -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>{% block title %}{{post.title}}{% endblock %}</title>
+</head>
+<body>
+<div class="container">
+	<!-- Navbar -->
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+				<div class="navbar-header">
+					 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+					 	<span class="sr-only">Toggle navigation</span><span class="icon-bar"></span>
+					 	<span class="icon-bar"></span>
+					 	<span class="icon-bar"></span>
+					 </button>
+					 <a class="navbar-brand" href="/teach/detail/?course={{course_name}}">{{course_name}}</a>
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+					<ul class="nav navbar-nav">
+						<li class="active">
+							 <a>欢迎: {{ user.username }}</a>
+						</li>
+                        <li class="active">
+                            <a href="/forum/homepage={{course_id}}">返回</a>
+                        </li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+                        {% if user.teacher %}
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">管理帖子<strong class="caret"></strong></a>
+							<ul class="dropdown-menu">
+								<li>
+									 <a href="/forum/set-top={{post.id}}/">{{no_top}}置顶</a>
+								</li>
+                                <li>
+									 <a href="/forum/set-best={{post.id}}/">{{no_best}}精华</a>
+								</li>
+								<li class="divider">
+								</li>
+                                <li>
+                                     <a href="/forum/delete-post={{post.id}}/">删除</a>
+                                </li>
+							</ul>
+						</li>
+                        {% endif %}
+                        <li>
+                            <a>
+
+                            </a>
+                        </li>
+					</ul>
+				</div>
+			</nav>
+			<div class="container-fluid">
+			    <div class="row-fluid">
+			        <div class="span12">
+			            <h2>
+			                <br />
+			            </h2>
+			        </div>
+			    </div>
+			</div>
+		</div>
+	</div>
+
+	{% block content %}
+    {% if not user.is_authenticated %}
+    <div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="jumbotron">
+				<h1>
+					请登录网站!
+				</h1>
+				<p>
+					您还没有登录软件工程教学辅助网站，请回到登录界面！
+                </p>
+				<p>
+					 <a class="btn btn-primary btn-large" href="/accounts/login/">返回登录界面</a>
+				</p>
+			</div>
+		</div>
+	</div>
+    {% else %}
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+			<div class="jumbotron">
+				<h2>
+					{{post.title}}
+				</h2>
+                {% if exist_file %}
+                <p>
+                    附件：<a href="/forum/download={{post.id}}/">{{filename}}</a>
+                </p>
+                {% endif %}
+				<h5>
+					{{post.content}}
+				</h5>
+                <p>
+                    <a class="btn btn-primary btn-large" id="modal-1" href="#modal-container-1" role="button" data-toggle="modal" >回帖</a>
+                    <div class="modal fade" id="modal-container-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                                    <h4 class="modal-title" id="releasePost">
+                                        回帖
+                                    </h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="alert alert-warning alert-dismissable">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                                        <h4>
+                                            注意!
+                                        </h4> 请时刻注意您发表的<strong>言论</strong>，不要进行不恰当的发言。
+                                    </div>
+                                    <div id='display'></div>
+                                    <form role="form" name="input_reply" action="/forum/release-reply={{post.id}}/" method="post" enctype="multipart/form-data">
+                                        {% csrf_token %}
+                                        <div class="form-group">
+                                            <label>请输入回帖内容：</label><br>
+                                            <p></p>
+                                            <textarea style="resize: none; width : 560px; height: 180px;" name="reply_content" id="content" class="j_enter" rows="8"></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <input type="button" class="btn btn-primary" value="回复" id="release" onClick="nextline()" >
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </p>
+			</div>
+		</div>
+	</div>
+
+	<div class="row clearfix">
+		<div class="col-md-12 column">
+            {% for reply in replies %}
+            <div class="row clearfix">
+                <div class="col-md-12 column">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>
+                                    回帖内容
+                                </th>
+                                <th width="125px">
+                                    回帖人
+                                </th>
+                                <th width="125px">
+                                    回帖时间
+                                </th>
+                                {% if user.teacher %}
+                                <th width="125px">
+                                    删除回帖
+                                </th>
+                                {% endif %}
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>{{reply.content}}</td>
+                                <td>{{reply.replier}}</td>
+                                <td>{{reply.time}}</td>
+                                {% if user.teacher %}
+                                <td>
+                                    <form role="form" action="/forum/delete-reply={{post.id}}/" method="post">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="reply_id" value="{{reply.id}}">
+                                        <button class="btn btn-sm btn-primary" type="submit">删除</button>
+                                    </form>
+                                </td>
+                                {% endif %}
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% endfor %}
+		</div>
+	</div>
+    {% endif %}
+	{% endblock content %}
+</div>
+
+
+<div class="footer">
+<footer style="text-align: center;">
+  <p>Posted by: G01 2017. Contact information: <a href="mailto:teachingwebsite@126.com">teachingwebsite@126.com</a>.</p>
+</footer>
+</div>
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="https://cdn.bootcss.com/jquery/2.1.1/jquery.min.js"></script>
+
+
+<script src="https://cdn.bootcss.com/jquery.form/4.2.2/jquery.form.js"></script>
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+<link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- 可选的Bootstrap主题文件（一般不使用） -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap-theme.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap-theme.min.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.css"></script>
+
+<script src="https://cdn.bootcss.com/bootstrap/3.0.1/css/bootstrap.min.css"></script>
+
+{% block script %}
+<script>
+    var status = "{{ status }}";
+    if(status != "true")
+        alert(status);
+    var txt = "<div class=\"alert alert-warning alert-dismissable\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\" aria-hidden=\"true\">×</button><h4>注意!</h4> 回帖内容均<strong>不能为空</strong>，且不超过<strong>256个字</strong>。</div>";
+    function nextline()
+	{
+	    content = document.getElementById('content').value;
+	    if(content.length <= 0 || content.length > 256)
+	    {
+		    document.getElementById('display').innerHTML = txt;
+		}
+		else
+		{
+		    var form = document.forms['input_reply'];
+		    form.submit();
+		}
+    }
+</script>
+{% endblock script %}
+
+</body>
+</html>

@@ -6,5 +6,6 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('account.urls')),
     url(r'^teach/', include('teach.urls')),
+    url(r'^forum/', include('forum.urls')),
     url(r'^home/$', views.home, name="home") # Set main page : /account/base.html
 ]
