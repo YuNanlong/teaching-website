@@ -97,6 +97,8 @@
                 function ()
                 {
                     var score = $(this).val();
+                    if(score.length == 0)
+                        return;
                     var reg = /[0-9]*/;
                     if(!reg.test(score))
                     {
