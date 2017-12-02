@@ -16,6 +16,10 @@ urlpatterns = [
     url(r'^get_unread_msg/$', views.get_unread_message_number, name="unread"),
     url(r'^upload_submit', views.upload_submit, name='upload_submit'),
     url(r'^teacher_announce', views.teacher_announce, name='teacher_announce'),
-    url(r'^download_submit', views.download_homework, name='download_submit'),
-    url(r'^upload_homework', views.upload_homework, name='upload_homework')
+    url(r'^download_submit', views.download_submit, name='download_submit'),
+    url(r'^upload_homework', views.upload_homework, name='upload_homework'),
+    url(r'^download_homework', views.download_homework, name='download_homework'),
+    url(r'^upload_video', views.upload_video, name='upload_video'),
+    url(r'^leave_comment/$', views.leave_comment, name='leave_comment'),
+    url(r'^delete_video', views.delete_video, name='delete_video')
 ]

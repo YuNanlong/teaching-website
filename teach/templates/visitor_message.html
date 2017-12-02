@@ -12,6 +12,7 @@
                 <br>
                 <hr>
                 <form method="post" class="form" action="#">
+                    {% csrf_token %}
                     <div class="form-group">
                         <label for="id_for_message">留言:</label>
                         <textarea name="message" id="id_for_message" class="form-control" style="height: 200px; resize: none;"></textarea>

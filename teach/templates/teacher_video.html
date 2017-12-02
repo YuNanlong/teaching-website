@@ -7,23 +7,28 @@
     <div class="row clearfix">
         <div class="col-md-12">
                 <h1>
-                    课程视频上传 <!-- Course name -->
+                    {{ course_name }}课程视频上传
                 </h1>
                 <br>
                 <!-- Section -->
                 <h4><span>Section 2017 Fall</span></h4>
                 <hr>
-                <form method="post" class="form" action="#">
+                <form method="post" class="form" action="{% url 'upload_video' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_for_course">课程名:</label>
+                        <input type="text" name="course_name" id="id_for_course" class="form-control" value="{{ course_name }}" readonly>
+                    </div>
                     <div class="form-group">
                         <label for="id_for_week">周:</label>
-                        <input type="text" name="week" id="id_for_week" class="form-control" value="">
+                        <input type="text" name="week_num" id="id_for_week" class="form-control" value="">
                     </div>
                     <div class="form-group">
                         <label for="id_for_video">视频链接：</label>
-                        <input type="text" name="video" id="id_for_video" class="form-control">
+                        <input type="text" name="url" id="id_for_video" class="form-control">
                     </div>
                     <p class="help-block">
-                        本站采用第三方视频链接播放视频。
+                        本站采用第三方视频链接播放视频。只需传视频URL即可，视频需要提前上传第三方网站。
                     </p>
                     <button type="submit" class="btn btn-primary">提交视频</button>
                 </form>

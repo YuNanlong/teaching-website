@@ -59,3 +59,10 @@ class Notice(models.Model):
     content = models.CharField(max_length=800) # 内容
     student = models.ManyToManyField(Student, db_table="need_notify") # 尚未被通知的学生
     post_time = models.DateTimeField(auto_now_add=True) # 发布时间
+
+class Comment(models.Model):
+    mobile=models.CharField(max_length=20)
+    content=models.TextField()
+
+    def __str__(self):
+        return self.mobile

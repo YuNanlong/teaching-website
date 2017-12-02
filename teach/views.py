@@ -243,7 +243,8 @@ def upload_submit(request):
             'deadline': homework.deadline,
             'status': True if submit.exists() else False,
             'score': submit.latest('id').score if submit.exists() else 0,
-            'comment': submit.latest('id').remark if submit.exists() else ''
+            'comment': submit.latest('id').remark if submit.exists() else '',
+            'homework': homework
         }
         return render(request, 'student_homework.html', dic)
     else:
@@ -262,11 +263,13 @@ def upload_submit(request):
         submit.save()
         return redirect('home')
 
+
 @login_required
 def download_submit(request):
     id = request.GET['id']
     submit = Submit.objects.get(id=id)
     name = submit.solution.name
+
     def read_file(filepath, chunk_size=10000):
         file = open(filepath, 'rb')
         while True:
@@ -275,10 +278,33 @@ def download_submit(request):
                 yield chunk
             else:
                 break
+
     response = StreamingHttpResponse(read_file('media/' + str(name)))
     response['Content-Disposition'] = 'attachment; filename=' + str(name)
     response['Content-Type'] = 'application/octet-stream'
     return response
+
+
+@login_required
+def download_homework(request):
+    id = request.GET['id']
+    homework = Homework.objects.get(id=id)
+    name = homework.enclosure.name
+
+    def read_file(filepath, chunk_size=10000):
+        file = open(filepath, 'rb')
+        while True:
+            chunk = file.read(chunk_size)
+            if chunk:
+                yield chunk
+            else:
+                break
+
+    response = StreamingHttpResponse(read_file('media/' + str(name)))
+    response['Content-Disposition'] = 'attachment; filename=' + str(name)
+    response['Content-Type'] = 'application/octet-stream'
+    return response
+
 
 @login_required
 def teacher_announce(request):
@@ -302,4 +328,80 @@ def teacher_announce(request):
         for student in students:
             notice.student.add(student)
         notice.save()
-        return HttpResponse("<script>alert('提交成功！'); window.location.href='/teach/teacher_announce?course_name="+course_name+ "';</script>")
+        return HttpResponse(
+            "<script>alert('提交成功！'); window.location.href='/teach/teacher_announce?course_name=" + course_name + "';</script>")
+
+
+@login_required
+def upload_homework(request):
+    if request.method == 'GET':
+        course_name = request.GET['course_name']
+        week_num = request.GET['week_num']
+        dic = {
+            'course_name': course_name,
+            'week_num': week_num
+        }
+        return render(request, 'teacher_homework.html', dic)
+    else:
+        course_name = request.POST['course_name']
+        week_num = request.POST['week_num']
+        course = Course.objects.get(name=course_name)
+        plan = course.plan_set.get(week_num=week_num)
+        if plan.homework is not None:
+            hh = plan.homework
+            hh.delete()
+        homework = Homework()
+        homework.plan = plan
+        homework.enclosure = request.FILES['enclosure']
+        homework.statement = request.POST['statement']
+        homework.mark = request.POST['mark']
+        homework.deadline = request.POST['deadline']
+        homework.save()
+        return redirect('home')
+
+@login_required
+def upload_video(request):
+    if request.method == 'GET':
+        course_name = request.GET['course_name']
+        dic = {
+            'course_name': course_name
+        }
+        return render(request, 'teacher_video.html', dic)
+    else:
+        course_name = request.POST['course_name']
+        week_num = request.POST['week_num']
+        course = Course.objects.get(name=course_name)
+        plan = Plan.objects.get(course=course, week_num=week_num)
+        url = request.POST['url']
+        Video.objects.create(plan=plan, url=url)
+        return redirect('home')
+
+def leave_comment(request):
+    if request.method == 'POST':
+        mobile=request.POST['contract']
+        content=request.POST['message']
+        Comment.objects.create(mobile=mobile,content=content)
+        return redirect('home')
+    else:
+        return render(request, 'visitor_message.html')
+
+
+@login_required
+def delete_video(request):
+    if request.method == 'GET':
+        course_name = request.GET['course_name']
+        videoIds = [video for video in Video.objects.all()]
+        dic = {
+            'course_name': course_name,
+            'video': videoIds
+        }
+        return render(request, 'teacher_video_delete.html', dic)
+    else:
+        videoIds = request.POST.getlist('deleteList')
+        print(videoIds)
+        for videoId in videoIds:
+            if Video.objects.filter(id=videoId).exists():
+                video = Video.objects.get(id=videoId)
+                video.delete()
+        return HttpResponse(1)
+

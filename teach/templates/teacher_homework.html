@@ -9,18 +9,19 @@
                 </h1>
                 <br>
                 <hr>
-                <form method="post" class="form" action="#" enctype="multipart/form-data">
+                <form method="post" class="form" action="{% url 'upload_homework' %}" enctype="multipart/form-data">
+                    {% csrf_token %}
                     <div class="row clearfix">
                         <div class="col-md-2 column">
                             <div class="form-group">
                             <label for="id_for_course">当前课程:</label>
-                            <input type="text" name="course" id="id_for_course" class="form-control" value="" readonly>
+                            <input type="text" name="course_name" id="id_for_course" class="form-control" value="{{ course_name }}" readonly>
                             </div>
                         </div>
                         <div class="col-md-2 column">
                             <div class="form-group">
                             <label for="id_for_week">当前周:</label>
-                            <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
+                            <input type="text" name="week_num" id="id_for_week" class="form-control" value="{{ week_num }}" readonly>
                             </div>
                         </div>
                         <div class="col-md-6 column">
@@ -32,17 +33,17 @@
                         <div class="col-md-2 column">
                             <div class="form-group">
                                 <label for="id_for_score">总分:</label>
-                                <input type="text" name="score" id="id_for_score" class="form-control">
+                                <input type="text" name="mark" id="id_for_score" class="form-control">
                             </div>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="id_for_week">作业描述:</label>
-                        <textarea name="description" id="id_for_week" class="form-control" style="height:200px; resize:none;"></textarea>
+                        <label for="id_for_statementk">作业描述:</label>
+                        <textarea name="statement" id="id_for_statement" class="form-control" style="height:200px; resize:none;"></textarea>
                     </div>
                     <div class="form-group">
-                        <label for="id_for_courseware">作业文件：</label>
-                        <input type="file" name="courseware" id="id_for_courseware">
+                        <label for="id_for_enclosure">作业文件：</label>
+                        <input type="file" name="enclosure" id="id_for_enclosure">
                     </div>
                     <p class="help-block">
                         上传如PDF, DOC[X], XLS[X], PPT[X], ZIP, RAR等格式的作业。

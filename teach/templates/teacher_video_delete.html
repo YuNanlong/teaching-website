@@ -6,14 +6,14 @@
     <div class="row clearfix">
         <div class="col-md-12">
                 <h1>
-                    删除课件<!-- Course -->
+                    删除视频<!-- Course -->
                 </h1>
                 <br>
                 <hr>
                 <p class="help-block">
                     点击左侧复选框，选择要删除的视频，然后点击删除按钮即可。
                 </p>
-                <button class="btn btn-danger" id="id_for_delete_video">删除课件</button>
+                <button class="btn btn-danger" id="id_for_delete_video">删除视频</button>
                 <br>
                 <table class="table table-hover">
                     <thead>
@@ -25,12 +25,14 @@
                     </tr>
                     </thead>
                     <tbody>
+                    {% for i in video %}
                     <tr class="video">
-                        <td><input name="video_id" type="checkbox" value="1"/></td>
-                        <td>1</td>
-                        <td>1</td>
-                        <td>Test courseware</td>
+                        <td><input name="video_id" type="checkbox" value="{{ i.id }}"/></td>
+                        <td>{{ i.id }}</td>
+                        <td>{{ i.plan.week_num }}</td>
+                        <td>{{ i.url }}</td>
                     </tr>
+                    {% endfor %}
                     </tbody>
                 </table>
         </div>

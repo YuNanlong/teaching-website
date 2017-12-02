@@ -33,6 +33,15 @@
                         <label>评语: </label><span>{{ comment }}</span>
                     </div>
                 </div>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-6 column">
+                        <label>作业下载链接: </label><a href="{% url 'download_homework' %}?id={{ homework.id }}"><span>{{ homework.enclosure }}</span></a>
+                    </div>
+                    <div class="col-md-6 column">
+                        <label>作业描述: </label><span>{{ homework.statement }}</span>
+                    </div>
+                </div>
                 <hr>
                 <br>
                 <div class="row clearfix">

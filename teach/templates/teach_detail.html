@@ -129,10 +129,10 @@
             <a href="{% url 'delete_classware' %}?course={{ course.name }}">
                 <button class="btn btn-primary">删除课件</button>
             </a>
-            <a href="#">
+            <a href="{% url 'upload_video' %}?course_name={{ course.name }}">
                 <button class="btn btn-primary">上传视频</button>
             </a>
-            <a href="#">
+            <a href="{% url 'delete_video' %}?course_name={{ course.name }}">
                 <button class="btn btn-primary">删除视频</button>
             </a>
             {% else %}
@@ -144,15 +144,6 @@
             <br><br>
         </div>
     </div><!--
-{#        --#}
-{#    {% for plan in plan_list %}#}
-{#        <p>{{ plan.topic }}</p>#}
-{#    {% endfor %}#}
-{#    {% for video in video_list %}#}
-{#        {% for url in video %}#}
-{#        <p>{{ url.url }}</p>#}
-{#        {% endfor %}#}
-{#    {% endfor %}-->#} -->
     <!-- 课程大纲 -->
     <div class="row clearfix">
         <div class="col-md-12 column">
@@ -221,7 +212,7 @@
                         <td>
 
                                 {% if status == 1 and user.student %}
-                                <a href="{% url 'upload_submit' %}?course_name={{ course }}&week_num={{ info.0.week_num }}">
+                                <a href="{% url 'upload_submit' %}?course_name={{ course.name }}&week_num={{ info.0.week_num }}">
                                     {{ info.3.enclosure }}
                                 </a>
                                 {% else %}
@@ -232,7 +223,7 @@
                             &nbsp;&nbsp;
 
                             {% if user.teacher and status == 1 %}
-                            <a href="#">
+                            <a href="{% url 'upload_homework' %}?course_name={{ course.name }}&week_num={{ info.0.week_num }}">
                                 <button class="btn btn-primary upload_homework">上传作业</button>
                             </a>
                                 {% if info.3 != null %}
