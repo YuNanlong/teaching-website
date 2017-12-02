@@ -76,7 +76,8 @@ def edit_schedule(request):
                 plan.date = form.cleaned_data['date']
                 plan.topic = form.cleaned_data['topic']
                 plan.save()
-            return HttpResponse("<script>alert('提交计划成功!'); window.location.href='/teach/edit_schedule?course=" + course_name + "';</script>")
+            return HttpResponse(
+                "<script>alert('提交计划成功!'); window.location.href='/teach/edit_schedule?course=" + course_name + "';</script>")
         return HttpResponse(
             "<script>alert('内部错误!'); window.location.href='/teach/edit_schedule?course=" + course_name + "';</script>")
     else:
@@ -257,13 +258,18 @@ def upload_submit(request):
         course = Course.objects.get(name=course_name)
         plan = course.plan_set.get(week_num=week_num)
         homework = plan.homework
-        submit = Submit()
+        if student.submit_set.filter(homework=homework).exists():
+            submit = student.submit_set.get(homework=homework)
+            submit.score = 0
+        else:
+            submit = Submit()
         submit.homework = homework
         submit.solution = solution
         submit.student = student
         submit.comment = message
         submit.save()
-        return HttpResponse("<script>alert('作业提交成功!');window.location.href='/teach/upload_submit?course_name="+course_name+"&week_num="+week_num+"';</script>")
+        return HttpResponse(
+            "<script>alert('作业提交成功!');window.location.href='/teach/upload_submit?course_name=" + course_name + "&week_num=" + week_num + "';</script>")
 
 
 @login_required
@@ -363,7 +369,9 @@ def upload_homework(request):
         homework.mark = request.POST['mark']
         homework.deadline = request.POST['deadline']
         homework.save()
-        return HttpResponse("<script>alert('添加作业成功!');window.location.href='/teach/upload_homework?course_name="+course_name+"&week_num="+week_num+"';</script>")
+        return HttpResponse(
+            "<script>alert('添加作业成功!');window.location.href='/teach/upload_homework?course_name=" + course_name + "&week_num=" + week_num + "';</script>")
+
 
 @login_required
 def upload_video(request):
@@ -385,11 +393,12 @@ def upload_video(request):
         return HttpResponse(
             "<script>alert('视频提交成功!');window.location.href='/teach/upload_video?course_name=" + course_name + "';</script>")
 
+
 def leave_comment(request):
     if request.method == 'POST':
-        mobile=request.POST['contract']
-        content=request.POST['message']
-        Comment.objects.create(mobile=mobile,content=content)
+        mobile = request.POST['contract']
+        content = request.POST['message']
+        Comment.objects.create(mobile=mobile, content=content)
         return HttpResponse("<script>alert('留言成功!我们会尽快给你答复!'); window.location.href='/teach/leave_comment/';</script>")
     else:
         return render(request, 'visitor_message.html')
@@ -413,4 +422,3 @@ def delete_video(request):
                 video = Video.objects.get(id=videoId)
                 video.delete()
         return HttpResponse(1)
-
