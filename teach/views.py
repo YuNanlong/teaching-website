@@ -229,7 +229,7 @@ def get_unread_message_number(request):
 
 @login_required
 def upload_submit(request):
-    student = request.user
+    student = request.user.student
     if request.method == 'GET':
         course_name = request.GET['course_name']
         week_num = request.GET['week_num']
@@ -283,7 +283,31 @@ def teacher_announce(request):
         return redirect('home')
 
 
-def download_homework(request):
+def upload_homework(request):
+    if request.method == 'GET':
+        course_name = request.GET['course_name']
+        week_num = request.GET['week_num']
+        dic = {
+            'course_name': course_name,
+            'week_num': week_num
+        }
+        return render(request, 'teacher_homework.html', dic)
+    else:
+        course_name = request.POST['course_name']
+        week_num = request.POST['week_num']
+        course = Course.objects.get(name=course_name)
+        plan = course.plan_set.get(week_num=week_num)
+        homework = Homework()
+        homework.enclosure = request.FILES['enclosure']
+        homework.statement = request.POST['statement']
+        homework.mark = request.POST['mark']
+        homework.deadline = request.POST['deadline']
+        homework.save()
+        plan.homework = homework
+        return redirect('home')
+
+
+def download_submit(request):
     id = request.GET['id']
     submit = Submit.objects.get(id=id)
     name = submit.solution.name
