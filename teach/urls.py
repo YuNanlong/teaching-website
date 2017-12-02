@@ -13,5 +13,6 @@ urlpatterns = [
     # url(r'^assign_homework', views.assign_homework, name="assign_homework"),
     url(r'^friendly_link/$', views.friendly_link, name="friendly_link"),
     url(r'^help/$', views.help_page, name="help"),
-    url(r'^get_unread_msg/$', views.get_unread_message_number, name="unread")
+    url(r'^get_unread_msg/$', views.get_unread_message_number, name="unread"),
+    url(r'^upload_submit/$',views.upload_submit)
 ]

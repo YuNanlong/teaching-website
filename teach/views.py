@@ -7,8 +7,9 @@ from .forms import *
 import os, sys
 from django.http import StreamingHttpResponse
 
+
 def teach_detail(request):
-    course_name = request.GET['course'] # 获取url中的课程名
+    course_name = request.GET['course']  # 获取url中的课程名
     user = request.user
     course = get_object_or_404(Course, name=course_name)
     plan_list = course.plan_set.order_by('week_num')
@@ -38,7 +39,7 @@ def teach_detail(request):
             status = 1
         else:
             status = 0
-    elif hasattr(user, 'teacher') == True:  
+    elif hasattr(user, 'teacher') == True:
         if user.teacher in course.teacher.all():
             status = 1
         else:
@@ -46,7 +47,9 @@ def teach_detail(request):
     else:
         status = 0
     teach_detail_info = zip(plan_list, classware_list, video_list, homework_list)
-    return render(request, 'teach_detail.html', {'status': status, 'course': course, "teach_detail_info": teach_detail_info})
+    return render(request, 'teach_detail.html',
+                  {'status': status, 'course': course, "teach_detail_info": teach_detail_info})
+
 
 @login_required
 def teacher_introduction(request):
@@ -54,13 +57,14 @@ def teacher_introduction(request):
     teacher_info = get_object_or_404(Teacher, pk=teacher_id)
     return render(request, 'teacher_introduction.html', {'teacher_info': teacher_info})
 
+
 @login_required
 def edit_schedule(request):
     course_name = request.GET['course']
     course = get_object_or_404(Course, name=course_name)
     if len(course.plan_set.all()) == 0:
         for i in range(course.week):
-            plan = Plan(week_num = i + 1, date='2017-01-01', course=course)
+            plan = Plan(week_num=i + 1, date='2017-01-01', course=course)
             plan.save()
     plan_list = course.plan_set.all()
     PlanFormSet = formset_factory(PlanForm, extra=0)
@@ -77,6 +81,7 @@ def edit_schedule(request):
         formset_init = [{'week_num': plan.week_num, 'date': plan.date, 'topic': plan.topic} for plan in plan_list]
         formset = PlanFormSet(initial=formset_init)
     return render(request, 'teacher_schedule.html', {'formset': formset})
+
 
 @login_required
 def check_notice(request):
@@ -95,6 +100,7 @@ def check_notice(request):
             related_notice.append(notice)
     return render(request, 'student_notice.html', {'related_notice': related_notice})
 
+
 @login_required
 def upload_classware(request):
     if request.method == 'POST':
@@ -106,16 +112,19 @@ def upload_classware(request):
             if len(plan) > 0:
                 classware = Classware(plan=plan[0], ppt=request.FILES['classware'])
                 classware.save()
-        return HttpResponse("<script>window.location.href='/teach/upload_classware?course="+course_name+"';</script>")
+        return HttpResponse(
+            "<script>window.location.href='/teach/upload_classware?course=" + course_name + "';</script>")
     else:
         course_name = request.GET['course']
         course = get_object_or_404(Course, name=course_name)
         form = ClasswareForm()
         return render(request, 'teacher_courseware.html', {'form': form, 'course': course})
 
+
 @login_required
 def download_classware(request):
     filename = request.GET['classware']
+
     def read_file(filepath, chunk_size=10000):
         file = open(filepath, 'rb')
         while True:
@@ -124,10 +133,12 @@ def download_classware(request):
                 yield chunk
             else:
                 break
+
     response = StreamingHttpResponse(read_file('media/' + str(filename)))
     response['Content-Disposition'] = 'attachment; filename=' + str(filename)
     response['Content-Type'] = 'application/octet-stream'
     return response
+
 
 @login_required
 def delete_classware(request):
@@ -135,8 +146,8 @@ def delete_classware(request):
         delete_id_list = request.POST.getlist('deleteList')
         for delete_id in delete_id_list:
             # if delete_id[0] != 'csrfmiddlewaretoken':
-                classware = get_object_or_404(Classware, pk=delete_id)
-                classware.delete()
+            classware = get_object_or_404(Classware, pk=delete_id)
+            classware.delete()
         return HttpResponse(True)
     else:
         course_name = request.GET['course']
@@ -144,8 +155,9 @@ def delete_classware(request):
         plan_list = course.plan_set.all()
         classware_list = []
         for plan in plan_list:
-            classware_list.extend(plan.classware_set.all())          
+            classware_list.extend(plan.classware_set.all())
         return render(request, 'teacher_courseware_delete.html', {'classware_list': classware_list})
+
 
 @login_required
 def check_homework(request):
@@ -178,22 +190,28 @@ def check_homework(request):
                 submit.score = form.cleaned_data['score']
                 submit.remark = form.cleaned_data['remark']
                 submit.save()
-        return HttpResponse("<script>alert('提交成功!');window.location.href='/teach/check_homework?id="+homework_id+"'</script>")
+        return HttpResponse(
+            "<script>alert('提交成功!');window.location.href='/teach/check_homework?id=" + homework_id + "'</script>")
     else:
-        formset_init = [{'submit_id': submit.id, 'score': submit.score, 'remark': submit.remark} for submit in submit_list]
+        formset_init = [{'submit_id': submit.id, 'score': submit.score, 'remark': submit.remark} for submit in
+                        submit_list]
         formset = SubmitFormSet(initial=formset_init)
-    # for submit in submit_list:
-    #     print(submit.score)
+        # for submit in submit_list:
+        #     print(submit.score)
         check_homework_info = zip(formset, submit_list)
-    # check_homework_range = range(0, len(submit_list))
-        return render(request, 'teacher_homework_correct.html', {'check_homework_info': check_homework_info, 'homework': homework,
-                "count": count, "avg": avg, "max": max_point, "min": min_point, "form_num": len(submit_list)})
+        # check_homework_range = range(0, len(submit_list))
+        return render(request, 'teacher_homework_correct.html',
+                      {'check_homework_info': check_homework_info, 'homework': homework,
+                       "count": count, "avg": avg, "max": max_point, "min": min_point, "form_num": len(submit_list)})
+
 
 def friendly_link(request):
     return render(request, "friendly_link.html")
 
+
 def help_page(request):
     return render(request, "help.html")
+
 
 def get_unread_message_number(request):
     if not request.user.is_authenticated() or hasattr(request.user, 'teacher'):
@@ -207,3 +225,31 @@ def get_unread_message_number(request):
             if user.student in notice.student.all():
                 count += 1
     return HttpResponse(count)
+
+
+@login_required
+def upload_submit(request):
+    if request.method == 'GET':
+        student = request.user
+        course_name = request.GET['course_name']
+        week_num = request.GET['week_num']
+        course = Course.objects.get(name=course_name)
+        plan = course.plan_set.get(week_num=week_num)
+        homework = plan.homework
+        submit = Submit.objects.filter(student=student, homework=homework)
+        dic = {
+            'deadline': homework.deadline,
+            'status': True if submit.exists() else False,
+            'score': submit.latest('id').score if submit.exists() else 0,
+            'comment': submit.latest('id').remark if submit.exists() else ''
+        }
+        return render(request, 'student_homework.html', dic)
+    else:
+        course_name = request.POST['course_name']
+        week_num = request.POST['week_num']
+        solution = request.FILES['homework']
+        message = request.POST['message']
+        course = Course.objects.get(name=course_name)
+        plan = course.plan_set.get(week_num=week_num)
+        homework = plan.homework
+        submit = Submit()
