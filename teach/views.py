@@ -229,8 +229,8 @@ def get_unread_message_number(request):
 
 @login_required
 def upload_submit(request):
+    student = request.user
     if request.method == 'GET':
-        student = request.user
         course_name = request.GET['course_name']
         week_num = request.GET['week_num']
         course = Course.objects.get(name=course_name)
@@ -253,6 +253,11 @@ def upload_submit(request):
         plan = course.plan_set.get(week_num=week_num)
         homework = plan.homework
         submit = Submit()
+        submit.homework = homework
+        submit.solution = solution
+        submit.student = student
+        submit.comment = message
+        submit.save()
 
 
 def teacher_announce(request):
@@ -276,3 +281,10 @@ def teacher_announce(request):
         for student in students:
             notice.student.add(student)
         return redirect('home')
+
+
+def download_homework(request):
+    id = request.GET['id']
+    submit = Submit.objects.get(id=id)
+    name = submit.solution.name
+    return redirect(to='/media/' + name)

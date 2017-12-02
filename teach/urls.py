@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^get_unread_msg/$', views.get_unread_message_number, name="unread"),
     url(r'^upload_submit/$',views.upload_submit),
     url(r'^teacher_announcet/$',views.teacher_announce),
+    url(r'^download_submit/$',views.download_homework)
 ]
