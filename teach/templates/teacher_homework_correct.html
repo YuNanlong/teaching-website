@@ -10,17 +10,20 @@
             </h1>
             <br>
             <div class="row clearfix">
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label>当前周:</label><span>{{ homework.plan.week_num }}</span>
                 </div>
                 <div class="col-md-6">
                     <label>截止日期:</label><span>{{ homework.deadline }}</span>
                 </div>
+                <div class="col-md-3">
+                    <label>作业总分:</label><span>{{ homework.mark }}</span>
+                </div>
             </div>
             <hr>
             <div class="row clearfix">
                 <div class="col-md-12">
-                    <form class="form" method="post">
+                    <form class="form" method="post" onsubmit="return check()">
                         {% csrf_token %}
                         <input id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="{{ form_num }}" />
                         <input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="{{ form_num }}" />
@@ -45,7 +48,7 @@
                                 <td>{{ info.1.student.student.username }}</td>
                                 <td><a href="{% url 'download_submit' %}?id={{ info.1.id }}">点此下载作业</a></td>
                                 <td>{{ info.1.comment }}</td>
-                                <td><input class="form-control" type="text" name="{{ info.0.score.html_name }}" value="{{ info.0.score.value }}"></td>
+                                <td><input class="form-control score" type="text" name="{{ info.0.score.html_name }}" value="{{ info.0.score.value }}"></td>
                                 <td><input class="form-control" type="text" name="{{ info.0.remark.html_name }}" value="{{ info.0.remark.value }}"></td>
                             </tr>
                             {% endfor %}
@@ -85,6 +88,37 @@
 
 {% block script %}
     <script type="text/javascript">
+        function check()
+        {
+            var status = true;
+            var scoreInputs = $(".score");
+            scoreInputs.each
+            (
+                function ()
+                {
+                    var score = $(this).val();
+                    var reg = /[0-9]*/;
+                    if(!reg.test(score))
+                    {
+                        status = false;
+                        return;
+                    }
 
+                    var scoreInt = parseInt(score);
+                    if(scoreInt < 0 || scoreInt > parseInt("{{ homework.mark }}"))
+                    {
+                        status = false;
+                        return;
+                    }
+                }
+            );
+
+            if(!status)
+            {
+                alert("分数格式输入有误，请检查!");
+            }
+            return status;
+        }
     </script>
+
 {% endblock script %}

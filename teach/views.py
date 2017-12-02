@@ -363,8 +363,13 @@ def upload_homework(request):
             print("nothing")
         homework = Homework()
         homework.plan = plan
-        if dict(request.FILES).groups['enclosure']:
+        try:
+            # if request.POST['enclosure'] is not None:
             homework.enclosure = request.FILES['enclosure']
+        # if dict(request.FILES).groups['enclosure']:
+        #     homework.enclosure = request.FILES['enclosure']
+        except:
+            homework.enclosure = None
         homework.statement = request.POST['statement']
         homework.mark = request.POST['mark']
         homework.deadline = request.POST['deadline']

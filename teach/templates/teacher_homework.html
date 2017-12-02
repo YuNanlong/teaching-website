@@ -9,7 +9,7 @@
                 </h1>
                 <br>
                 <hr>
-                <form method="post" class="form" action="{% url 'upload_homework' %}" enctype="multipart/form-data">
+                <form method="post" class="form" action="{% url 'upload_homework' %}" enctype="multipart/form-data" onsubmit="return check()">
                     {% csrf_token %}
                     <div class="row clearfix">
                         <div class="col-md-2 column">
@@ -67,6 +67,19 @@
         }
     );
 
+    function check()
+    {
+        var reg = /^[1-9][0-9]{0,2}/;
+        var totalScore = $("#id_for_score").val();
+        var score = parseInt(totalScore);
+        if(!reg.test(totalScore) || (score > 100))
+        {
+            alert("总分必须在1-100之间");
+            return false;
+        }
+
+        return true;
+    }
 
 </script>
 {% endblock script %}

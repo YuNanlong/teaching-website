@@ -210,17 +210,17 @@
                             {% endfor %}
                         </td>
                         <td>
-
+                        {% if info.3 %}
                                 {% if status == 1 and user.student %}
                                 <a href="{% url 'upload_submit' %}?course_name={{ course.name }}&week_num={{ info.0.week_num }}">
-                                    {{ info.3.enclosure }}
+                                    第{{ info.0.week_num }}周作业
                                 </a>
                                 {% else %}
                                 <a>
-                                    {{ info.3.enclosure }}
+                                    第{{ info.0.week_num }}周作业
                                 </a>
                                 {% endif %}
-                            &nbsp;&nbsp;
+                        {% endif %}
 
                             {% if user.teacher and status == 1 %}
                             <a href="{% url 'upload_homework' %}?course_name={{ course.name }}&week_num={{ info.0.week_num }}">
