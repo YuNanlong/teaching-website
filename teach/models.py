@@ -33,12 +33,18 @@ class Video(models.Model):
     plan = models.ForeignKey(Plan)
     url = models.URLField() # 视频链接
 
+    def __str__(self):
+        return str(self.plan.course.name) + str(self.plan.week_num) + ':' + self.url
+
 class Homework(models.Model):
     plan = models.OneToOneField(Plan)
     deadline = models.DateField() # 截止日期
     mark = models.IntegerField() # 总分
     enclosure = models.FileField(upload_to='homeworks') # 作业附件
     statement = models.CharField(max_length=800, blank=True) # 作业说明，非必需
+
+    def __str__(self):
+        return str(self.plan.course.name) + str(self.plan.week_num)
 
 class Classware(models.Model):
     plan = models.ForeignKey(Plan)

@@ -39,7 +39,7 @@
                                          value="{{ field.value }}" required readonly/>
                                 {% elif "date" in field.html_name %}
                                     <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}"
-                                         value="{{ field.value }}" required/>
+                                         value="{{ field.value | date:"Y/m/d" }}" required/>
                                 {% else %}
                                     <input type="text" class="form-control" id="{{ field.id_for_label }}" name="{{ field.html_name }}"
                                          value="{{ field.value }}"/>
@@ -50,7 +50,7 @@
                         {% endfor %}
                     </tbody>
                 </table>
-                <p class="help-block">日期请按照格式: [x]年[x]月[x]日</p>
+                <p class="help-block">日期请按照格式: [Y]/[m]/[d]</p>
                 <button type="submit" class="btn btn-primary">提交教学计划</button>
             </form>
         </div>

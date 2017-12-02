@@ -76,11 +76,13 @@ def edit_schedule(request):
                 plan.date = form.cleaned_data['date']
                 plan.topic = form.cleaned_data['topic']
                 plan.save()
-            return redirect('home')
+            return HttpResponse("<script>alert('提交计划成功!'); window.location.href='/teach/edit_schedule?course=" + course_name + "';</script>")
+        return HttpResponse(
+            "<script>alert('内部错误!'); window.location.href='/teach/edit_schedule?course=" + course_name + "';</script>")
     else:
         formset_init = [{'week_num': plan.week_num, 'date': plan.date, 'topic': plan.topic} for plan in plan_list]
         formset = PlanFormSet(initial=formset_init)
-    return render(request, 'teacher_schedule.html', {'formset': formset})
+        return render(request, 'teacher_schedule.html', {'formset': formset})
 
 
 @login_required
@@ -261,7 +263,7 @@ def upload_submit(request):
         submit.student = student
         submit.comment = message
         submit.save()
-        return redirect('home')
+        return HttpResponse("<script>alert('作业提交成功!');window.location.href='/teach/upload_submit?course_name="+course_name+"&week_num="+week_num+"';</script>")
 
 
 @login_required
@@ -347,9 +349,12 @@ def upload_homework(request):
         week_num = request.POST['week_num']
         course = Course.objects.get(name=course_name)
         plan = course.plan_set.get(week_num=week_num)
-        if plan.homework is not None:
-            hh = plan.homework
-            hh.delete()
+        try:
+            tmp_homework = Homework.objects.get(plan=plan)
+            if tmp_homework is not None:
+                tmp_homework.delete()
+        except:
+            print("nothing")
         homework = Homework()
         homework.plan = plan
         homework.enclosure = request.FILES['enclosure']
@@ -357,14 +362,16 @@ def upload_homework(request):
         homework.mark = request.POST['mark']
         homework.deadline = request.POST['deadline']
         homework.save()
-        return redirect('home')
+        return HttpResponse("<script>alert('添加作业成功!');window.location.href='/teach/upload_homework?course_name="+course_name+"&week_num="+week_num+"';</script>")
 
 @login_required
 def upload_video(request):
     if request.method == 'GET':
         course_name = request.GET['course_name']
+        course = Course.objects.get(name=course_name)
         dic = {
-            'course_name': course_name
+            'course_name': course_name,
+            'week': course.week
         }
         return render(request, 'teacher_video.html', dic)
     else:
@@ -374,14 +381,15 @@ def upload_video(request):
         plan = Plan.objects.get(course=course, week_num=week_num)
         url = request.POST['url']
         Video.objects.create(plan=plan, url=url)
-        return redirect('home')
+        return HttpResponse(
+            "<script>alert('视频提交成功!');window.location.href='/teach/upload_video?course_name=" + course_name + "';</script>")
 
 def leave_comment(request):
     if request.method == 'POST':
         mobile=request.POST['contract']
         content=request.POST['message']
         Comment.objects.create(mobile=mobile,content=content)
-        return redirect('home')
+        return HttpResponse("<script>alert('留言成功!我们会尽快给你答复!'); window.location.href='/teach/leave_comment/';</script>")
     else:
         return render(request, 'visitor_message.html')
 
@@ -398,7 +406,7 @@ def delete_video(request):
         return render(request, 'teacher_video_delete.html', dic)
     else:
         videoIds = request.POST.getlist('deleteList')
-        print(videoIds)
+        # print(videoIds)
         for videoId in videoIds:
             if Video.objects.filter(id=videoId).exists():
                 video = Video.objects.get(id=videoId)

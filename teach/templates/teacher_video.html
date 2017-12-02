@@ -13,7 +13,7 @@
                 <!-- Section -->
                 <h4><span>Section 2017 Fall</span></h4>
                 <hr>
-                <form method="post" class="form" action="{% url 'upload_video' %}">
+                <form method="post" class="form" action="{% url 'upload_video' %}" onsubmit="return check()">
                     {% csrf_token %}
                     <div class="form-group">
                         <label for="id_for_course">课程名:</label>
@@ -49,6 +49,16 @@
         }
     );
 
+    function check()
+    {
+        if(parseInt($("#id_for_week").val()) > {{ week }})
+        {
+            alert("周数最多为{{ week }}!");
+            return false;
+        }
 
+        //alert("提交成功");
+        return true;
+    }
 </script>
 {% endblock script %}
