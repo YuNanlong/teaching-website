@@ -40,7 +40,7 @@ class Homework(models.Model):
     plan = models.OneToOneField(Plan)
     deadline = models.DateField() # 截止日期
     mark = models.IntegerField() # 总分
-    enclosure = models.FileField(upload_to='homeworks') # 作业附件
+    enclosure = models.FileField(upload_to='homeworks', storage=FileStorage()) # 作业附件
     statement = models.CharField(max_length=800, blank=True) # 作业说明，非必需
 
     def __str__(self):
@@ -56,7 +56,7 @@ class Submit(models.Model):
     comment = models.CharField(max_length=800, blank=True) # 作业备注，非必需
     submit_time = models.DateField(auto_now=True) # 上传时间
     score = models.IntegerField(default=0) # 得分
-    solution = models.FileField(upload_to='submits/') # 作业文件
+    solution = models.FileField(upload_to='submits/', storage=FileStorage()) # 作业文件
     remark = models.CharField(max_length=800, blank=True) # 教师评语
 
 class Notice(models.Model):

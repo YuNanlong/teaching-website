@@ -357,7 +357,8 @@ def upload_homework(request):
             print("nothing")
         homework = Homework()
         homework.plan = plan
-        homework.enclosure = request.FILES['enclosure']
+        if dict(request.FILES).groups['enclosure']:
+            homework.enclosure = request.FILES['enclosure']
         homework.statement = request.POST['statement']
         homework.mark = request.POST['mark']
         homework.deadline = request.POST['deadline']
