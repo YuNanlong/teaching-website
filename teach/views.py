@@ -253,3 +253,26 @@ def upload_submit(request):
         plan = course.plan_set.get(week_num=week_num)
         homework = plan.homework
         submit = Submit()
+
+
+def teacher_announce(request):
+    if request.method == 'GET':
+        course_name = request.GET['course_name']
+        dic = {
+            'course_name': course_name
+        }
+        return render(request, 'teacher_announce.html', dic)
+    if request.method == 'POST':
+        course_name = request.POST['course_name']
+        title = request.POST['title']
+        content = request.POST['content']
+        course = Course.objects.get(name=course_name)
+        notice = Notice()
+        notice.course = course
+        notice.title = title
+        notice.content = content
+        notice.save()
+        students = course.student.all()
+        for student in students:
+            notice.student.add(student)
+        return redirect('home')
