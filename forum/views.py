@@ -59,12 +59,8 @@ def homepage(request, id, status = "true"):
         tmp_post_list = []
         course_section_posts = Post.objects.filter(course=course, section=section).order_by("-is_top", "-time")
         for post in course_section_posts:
-            if post.is_best == 0:
-                is_best = '普通帖'
-            else:
-                is_best = '精华帖'
             tmp_post_list.append(
-                {'id': post.id, 'title': post.title, 'poster': post.poster.username, 'is_best': is_best,
+                {'id': post.id, 'title': post.title, 'poster': post.poster.username, 'is_best': post.is_best,
                  'time': post.time})
         tmp_section['post_list'] = tmp_post_list
         section_list.append(tmp_section)
