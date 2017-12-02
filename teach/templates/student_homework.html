@@ -6,20 +6,31 @@
     <div class="row clearfix">
         <div class="col-md-12 column">
                 <h1>
-                    作业上传 <!-- Course name -->
+                    作业上传
                 </h1>
                 <br>
                 <hr>
 
                 <div class="row clearfix">
-                    <div class="col-md-4 column">
-                        <label>当前作业提交状态: <span></span></label>
+                    <div class="col-md-6 column">
+                        <label>截止时间: </label><span>{{ deadline }}</span>
                     </div>
-                    <div class="col-md-4 column">
-                        <label>截止时间: <span></span></label>
+                    <div class="col-md-6 column">
+                        <label>当前作业提交状态: </label>
+                        {% if status %}
+                        <span>已提交</span>
+                        {% else %}
+                        <span>未提交</span>
+                        {% endif %}
                     </div>
-                    <div class="col-md-4 column">
-                        <label>当前作业分数: <span></span></label>
+                </div>
+                <br>
+                <div class="row clearfix">
+                    <div class="col-md-3 column">
+                        <label>当前作业分数: </label><span>{{ score }}</span>
+                    </div>
+                    <div class="col-md-9 column">
+                        <label>评语: </label><span>{{ comment }}</span>
                     </div>
                 </div>
                 <hr>
@@ -27,9 +38,14 @@
                 <div class="row clearfix">
                     <div class="col-md-12 column">
                     <form method="post" class="form" enctype="multipart/form-data" action="#">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="id_for_week">当前课程:</label>
+                            <input type="text" name="course_name" id="id_for_week" class="form-control" value="{{ course_name }}" readonly>
+                        </div>
                         <div class="form-group">
                             <label for="id_for_week">当前周:</label>
-                            <input type="text" name="week" id="id_for_week" class="form-control" value="" readonly>
+                            <input type="text" name="week_num" id="id_for_week" class="form-control" value="{{ week_num }}" readonly>
                         </div>
                         <div class="form-group">
                             <label for="id_for_homework">作业附件:</label>

@@ -117,7 +117,7 @@
             </h2>
             <hr>
             {% if user.teacher %}
-            <a href="#">
+            <a href="{% url 'teacher_announce' %}?course_name={{ course.name }}">
                 <button class="btn btn-primary">发布课程公告</button>
             </a>
             <a href="{% url 'edit_schedule' %}?course={{ course.name }}">
@@ -221,7 +221,7 @@
                         <td>
 
                                 {% if status == 1 and user.student %}
-                                <a href="#">
+                                <a href="{% url 'upload_submit' %}?course_name={{ course }}&week_num={{ info.0.week_num }}">
                                     {{ info.3.enclosure }}
                                 </a>
                                 {% else %}

@@ -14,7 +14,8 @@ urlpatterns = [
     url(r'^friendly_link/$', views.friendly_link, name="friendly_link"),
     url(r'^help/$', views.help_page, name="help"),
     url(r'^get_unread_msg/$', views.get_unread_message_number, name="unread"),
-    url(r'^upload_submit/$',views.upload_submit),
-    url(r'^teacher_announcet/$',views.teacher_announce),
-    url(r'^download_submit/$',views.download_homework)
+    url(r'^upload_submit',views.upload_submit, name='upload_submit'),
+    url(r'^download_submit', views.download_submit, name='download_submit'),
+    url(r'^teacher_announce',views.teacher_announce, name='teacher_announce'),
+
 ]

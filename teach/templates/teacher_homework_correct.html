@@ -3,7 +3,6 @@
 {% block title %}批改作业{% endblock title %}
 
 {% block content %}
-<!-- TODO：添加作业下载链接 -->
     <div class="row clearfix">
         <div class="col-md-12">
             <h1>
@@ -45,7 +44,7 @@
                                     value="{{ info.0.submit_id.value }}" readonly></td>
                                 <td>{{ info.1.student.student.username }}</td>
                                 <td>{{ info.1.comment }}</td>
-                                <td><a href="#">点此下载作业</a></td>
+                                <td><a href="{% url 'download_submit' %}?id={{ info.1.id }}">点此下载作业</a></td>
                                 <td><input class="form-control" type="text" name="{{ info.0.score.html_name }}" value="{{ info.0.score.value }}"></td>
                                 <td><input class="form-control" type="text" name="{{ info.0.remark.html_name }}" value="{{ info.0.remark.value }}"></td>
                             </tr>

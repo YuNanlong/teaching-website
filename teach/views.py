@@ -229,7 +229,7 @@ def get_unread_message_number(request):
 
 @login_required
 def upload_submit(request):
-    student = request.user
+    student = request.user.student
     if request.method == 'GET':
         course_name = request.GET['course_name']
         week_num = request.GET['week_num']
@@ -238,6 +238,8 @@ def upload_submit(request):
         homework = plan.homework
         submit = Submit.objects.filter(student=student, homework=homework)
         dic = {
+            'course_name': course_name,
+            'week_num': week_num,
             'deadline': homework.deadline,
             'status': True if submit.exists() else False,
             'score': submit.latest('id').score if submit.exists() else 0,
@@ -258,8 +260,27 @@ def upload_submit(request):
         submit.student = student
         submit.comment = message
         submit.save()
+        return redirect('home')
 
+@login_required
+def download_submit(request):
+    id = request.GET['id']
+    submit = Submit.objects.get(id=id)
+    name = submit.solution.name
+    def read_file(filepath, chunk_size=10000):
+        file = open(filepath, 'rb')
+        while True:
+            chunk = file.read(chunk_size)
+            if chunk:
+                yield chunk
+            else:
+                break
+    response = StreamingHttpResponse(read_file('media/' + str(name)))
+    response['Content-Disposition'] = 'attachment; filename=' + str(name)
+    response['Content-Type'] = 'application/octet-stream'
+    return response
 
+@login_required
 def teacher_announce(request):
     if request.method == 'GET':
         course_name = request.GET['course_name']
@@ -280,11 +301,5 @@ def teacher_announce(request):
         students = course.student.all()
         for student in students:
             notice.student.add(student)
-        return redirect('home')
-
-
-def download_homework(request):
-    id = request.GET['id']
-    submit = Submit.objects.get(id=id)
-    name = submit.solution.name
-    return redirect(to='/media/' + name)
+        notice.save()
+        return HttpResponse("<script>alert('提交成功！'); window.location.href='/teach/teacher_announce?course_name="+course_name+ "';</script>")
