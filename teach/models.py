@@ -48,6 +48,7 @@ class Homework(models.Model):
 
 class Classware(models.Model):
     plan = models.ForeignKey(Plan)
+    filename = models.CharField(max_length=100)
     ppt = models.FileField(upload_to=classware_upload_path, storage=FileStorage()) # 课件文件
 
 class Submit(models.Model):

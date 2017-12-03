@@ -113,7 +113,7 @@ def upload_classware(request):
         if form.is_valid():
             plan = course.plan_set.filter(week_num=request.POST['week_num'])
             if len(plan) > 0:
-                classware = Classware(plan=plan[0], ppt=request.FILES['classware'])
+                classware = Classware(plan=plan[0], filename=request.FILES['classware'].name, ppt=request.FILES['classware'])
                 classware.save()
         return HttpResponse(
             "<script>window.location.href='/teach/upload_classware?course=" + course_name + "';</script>")

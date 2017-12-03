@@ -1,0 +1,111 @@
+{
+    "configs": [
+        {
+            "server": "hk2-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇭🇰 HK2 ⚡ x2.5",
+            "timeout": 5
+        },
+        {
+            "server": "hk4-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇭🇰 HK4",
+            "timeout": 5
+        },
+        {
+            "server": "jp2-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇯🇵 JP2",
+            "timeout": 5
+        },
+        {
+            "server": "la1-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇺🇸 LA1",
+            "timeout": 5
+        },
+        {
+            "server": "sg2-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇸🇬 SG2 ⚡ x2.5",
+            "timeout": 5
+        },
+        {
+            "server": "tw1-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇹🇼 TW1",
+            "timeout": 5
+        },
+        {
+            "server": "tw2-ss.tmdns.net",
+            "server_port": 42004,
+            "password": "c4fbfc3b",
+            "method": "chacha20",
+            "plugin": "",
+            "plugin_opts": "",
+            "remarks": "🇹🇼 TW2",
+            "timeout": 5
+        }
+    ],
+    "strategy": null,
+    "index": 0,
+    "global": false,
+    "enabled": true,
+    "shareOverLan": false,
+    "isDefault": false,
+    "localPort": 1080,
+    "pacUrl": null,
+    "useOnlinePac": false,
+    "secureLocalPac": true,
+    "availabilityStatistics": false,
+    "autoCheckUpdate": true,
+    "checkPreRelease": false,
+    "isVerboseLogging": false,
+    "logViewer": {
+        "topMost": false,
+        "wrapText": false,
+        "toolbarShown": false,
+        "Font": "Consolas, 8pt",
+        "BackgroundColor": "Black",
+        "TextColor": "White"
+    },
+    "proxy": {
+        "useProxy": false,
+        "proxyType": 0,
+        "proxyServer": "",
+        "proxyPort": 0,
+        "proxyTimeout": 3
+    },
+    "hotkey": {
+        "SwitchSystemProxy": "",
+        "SwitchSystemProxyMode": "",
+        "SwitchAllowLan": "",
+        "ShowLogs": "",
+        "ServerMoveUp": "",
+        "ServerMoveDown": ""
+    }
+}
