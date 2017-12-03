@@ -63,7 +63,7 @@ class Submit(models.Model):
 class Notice(models.Model):
     course = models.ForeignKey(Course)
     title = models.CharField(max_length=60) # 标题
-    content = models.CharField(max_length=800) # 内容
+    content = models.CharField(max_length=800, blank=True) # 内容
     student = models.ManyToManyField(Student, db_table="need_notify") # 尚未被通知的学生
     post_time = models.DateTimeField(auto_now_add=True) # 发布时间
 

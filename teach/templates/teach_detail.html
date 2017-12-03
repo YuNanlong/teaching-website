@@ -191,7 +191,7 @@
                             {% for courseware in info.1 %}
                             <p>
                                 <a href="{% url 'download_classware' %}?classware={{ courseware.ppt.name }}">
-                                    {{ courseware.ppt.name }}
+                                    {{ courseware.filename }}
                                 </a>
                             </p>
                             <br>

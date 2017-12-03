@@ -374,6 +374,13 @@ def upload_homework(request):
         homework.mark = request.POST['mark']
         homework.deadline = request.POST['deadline']
         homework.save()
+        notice_title = course.name + "第" + week_num + "周的作业已发布"
+        notice = Notice(course=course, title=notice_title)
+        notice.save()
+        student_list = course.student.all()
+        for student in student_list:
+            notice.student.add(student)
+        notice.save()
         return HttpResponse(
             "<script>alert('添加作业成功!');window.location.href='/teach/upload_homework?course_name=" + course_name + "&week_num=" + week_num + "';</script>")
 
